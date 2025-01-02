@@ -5,8 +5,6 @@ format:
   html:
     self-contained: true
     toc: true
-  pdf:
-    keep-tex: false
 fontfamily: mathpazo
 fontsize: 11pt
 editor: 
@@ -595,7 +593,7 @@ I do not take formal attendance in this class. However, it is my
 expectation that you remain in class and on task until you have finished
 all your activities and assignments.
 
-If you are feeling ill, please **do not come to class**.
+**If you are feeling ill, please do not come to class**.
 
 Here’s what you should do if you do miss a class:
 
@@ -611,7 +609,7 @@ that is and how I can help.
 
 ### Accessibility and Accomodations
 
-I have taken numerous steps to ensure that all of the materials presented in this course are accessible to all participants, regardless of physical or learning disabilities. HI know that everyone is unique and I may have unintentionally overlooked something that limits access to some materials or activities. Please let me know if you cannot access any content. If you find you need additional accommodations to complete the required course work, please contact me as soon as possible! I want to support your success. 
+I have taken numerous steps to ensure that all of the materials presented in this course are accessible to all participants, regardless of physical or learning disabilities. I know that everyone is unique and I may have unintentionally overlooked something that limits access to some materials or activities. Please let me know if you cannot access any content. If you find you need additional accommodations to complete the required course work, please contact me as soon as possible! I want to support your success. 
 
 If you wish to request disability-related accommodations such as extra exam time for this or any other course, please contact the [Disability Resource Center](https://drc.calpoly.edu/). It's important to do this with as much advanced notice as possible, so you have full access to your course materials and activities in a timely manner. **Please also email me** to let me know that I should expect an email from the DRC to get you the accommodations that you need.
 
@@ -771,7 +769,7 @@ In this class the assumed knowledge is the course materials, including the cours
 - If you use any **`R` functions or code that are not in the course materials**, you must cite where you found it. e.g., if you look up the help file for `mutate()` and you learn about a function not covered in the course materials, you are required to cite the documentation when using that function.
 - If you use **Google** you are expected to “inform” me of any resources you used by pasting the link to the resource in a code comment next to where you used that resource.
 - If you use **ChatGPT** you are expected to “inform” me by stating that you used it in a code comment next to where you used it including **the full prompt that you gave ChatGPT**.
-- If you **work with classmates** on an assignment you include a note with their names. 
+- If you **work with classmates** on an assignment, you are expected to “inform” me by including a note with their names. 
 :::
 
 **If you have any questions about using and citing sources, you are
