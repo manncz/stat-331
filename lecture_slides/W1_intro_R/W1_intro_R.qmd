@@ -424,6 +424,18 @@ the_answer <- 42
 earth_demolished <- FALSE
 ```
 
+## Naming Conventions
+
+
+-   `some_people_use_snake_case`
+-   `somePeopleUseCamelCase`
+-   `some.people.use.periods`
+-   A few people mix conventions with `variables_thatLookLike.this` and they are almost universally hated.
+
+::: callout-tip
+Just pick one and stick with it!
+:::
+
 ## Data Structures
 
 *Homogeneous*: every element has the same data type.
