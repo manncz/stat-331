@@ -48,9 +48,16 @@ Execution options specify how the R code in your Quarto document should be displ
 
 To start, your YAML should look something like this:
 
-```{r}
-#| out.width = "50%"
-knitr::include_graphics("images/quarto_yaml.png")
+```{yaml}
+#| echo: true
+---
+title: "Lab 1: Introduction to Quarto"
+author: "Dr. C"
+format: html
+embed-resources: true
+code-tools: true
+editor: source (or visual)
+---
 ```
 
 Similar to how you added an `author`, `embed-resources`, (and `editor`) line, you will first need to add an `execute` line to your YAML.
