@@ -157,7 +157,7 @@ Cal2 <- tibble(date = seq(ymd(20240107), ymd(20240113), by = 1))  |>
          week     = wom(date),
          classday = wkdy %in% class_wdays,
          officehrday = wkdy %in% officehr_wdays,
-         officehrtime = c(NA, NA, "1:00-2:30pm",NA,  "10:00-\n11:30am", "12:00-1:00pm", NA)
+         officehrtime = c(NA, NA, "1:00-2:00pm",NA,  "10:00-\n11:00am", "12:00-1:00pm", NA)
   )
 
 
@@ -236,7 +236,7 @@ You can call me Professor, Professor/Prof. C. or Dr. C.
 **Course Discord Page:**
 
 For questions of general interest, such as course clarifications or
-conceptual questions, please use the course Discord page (you will join
+conceptual questions, please use the course [Discord page](https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started) (you will join
 this Week 1). If you have a question – someone else in class does too! I
 encourage you all to respond to each other. I will check Discord at
 least twice each weekday during working hours (8-6) to ensure that
@@ -391,8 +391,7 @@ are available online for free.
 
 **Computing**
 
-`r fontawesome::fa("computer")` Although you may always work on the
-Studio computers, I strongly recommend that you use your own personal
+`r fontawesome::fa("computer")` Although you may always work on the computers in the classroom, I strongly recommend that you use your own personal
 laptop for this course if you have one.
 
 We will (obviously) be using the `R` statistical software
