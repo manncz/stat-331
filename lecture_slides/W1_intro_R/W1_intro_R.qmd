@@ -65,6 +65,10 @@ I am looking forward to reading your introductions on Discord!
 
 # Syllabus
 
+## Weekly Overview
+
+![](images/weeklyschedule.png)
+
 ## First Time's the Charm
 
 -   This is my first time teaching this class
