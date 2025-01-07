@@ -62,7 +62,7 @@ editor: source (or visual)
 
 Similar to how you added an `author`, `embed-resources`, (and `editor`) line, you will first need to add an `execute` line to your YAML.
 
-**Use the guide above to specify execution options so that:**
+**Use the [guide](https://quarto.org/docs/computations/execution-options.html) to specify execution options so that:**
 
 1.  your source code is always output on the page.
 2.  your document will render even if there are errors.
@@ -191,7 +191,7 @@ Carry out the following steps:
 
 3. Run your code chunk to obtain the output for your statistical test.
 
-4. Create a numbered list containing:
+4. Write a numbered list (in Markdown) below the code chunk containing:
 
 -   Your conclusion (in the context of these data) based on the p-value.
 -   An interpretation of the confidence interval (make sure to read what confidence level is used by default).
@@ -223,7 +223,7 @@ Make the following changes to your document:
 
 2. Specify in the code chunk options that your boxplots of tooth length by supplement delivery method should be **center aligned**.
 
-3. Write and include a **figure captio**n for the boxplots using a code-chunk option.
+3. Write and include a **figure caption** for the boxplots using a code-chunk option.
 
 You might have fun playing around with other themes or options!
 
