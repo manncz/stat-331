@@ -1,0 +1,114 @@
+---
+title: "Week 1 Additional Notes"
+format: html
+editor: source
+self-contained: true
+---
+
+```{r}
+#| echo: true
+#| message: false
+
+library(readr)
+top_secret <- read_csv("https://www.dropbox.com/s/k72h1zewk4gtqep/PA_Secret_Code?dl=1", 
+                       col_names = FALSE)$X1
+```
+
+
+```{r}
+head(top_secret, n = 10)
+```
+
+### Working with Vectors
+
+If you apply a (non-summarizing) mathematical function to a vector in `R`, it is applied to every element of the vector separately.
+
+This includes simple arithmetic (`+`, `*`, `^2`, etc.) and logical statements, for example.
+
+This means you should **rarely** need to use for-loops in `R`!
+
+```{r}
+head(top_secret + 1)
+```
+
+### Vectors of Booleans Are Useful
+
+```{r}
+length(top_secret < 100)
+head(top_secret < .35)
+```
+
+If I want to find the **number** of elements in the `top_secret` vector that are less than .35:
+
+```{r}
+sum(top_secret < .35)
+```
+
+If I want to find the **proportion** of elements in the `top_secret` vector that are less than .35:
+
+```{r}
+mean(top_secret < .35)
+```
+
+### A Bit More on Indexing
+
+You can index using either numbers or a vector/matrix of Booleans.
+
+For example, if I want to subset the `top_secret` vector to only those with values less than .35, I could either 
+
+1. use the `which` function to pull the indices that are less than .35:
+
+```{r}
+length(which(top_secret < .35))
+head(which(top_secret < .35))
+```
+
+2. use just a logical statement to get a vector the same length as `top_secret` which indicates for each element if it is less than .35 or not.
+
+```{r}
+length(top_secret < .35)
+head(top_secret < .35)
+```
+
+You can check that indexing with either of these vectors will result in the same output:
+
+```{r}
+mean(top_secret[which(top_secret < .35)] == top_secret[top_secret < .35])
+```
+
+### Assigning Variables - How Much?
+
+A part of efficient and readable code will be thinking about how often to assign a step in the process a new variable name. 
+
+There is no hard-and-fast rule I can give you - you should just be mindful of this!
+
+In the case of Practice Activity, we did a lot of updating the same vector or matrix. In practice, I might give the updated matrix or vector a new name, just to have a clean spot to go back to if I made a mistake.
+
+On the other hand, when completing the sanity checks, you don't really need to assign the check to a new variable name.
+
+For example, if I again just want to know how many numbers in the `top_secret` vector are less than .35, I only need to use one line of code:
+
+```{r}
+sum(top_secret < .35)
+```
+
+rather than 
+
+```{r}
+top_secret_less_35 <- sum(top_secret < .35)
+top_secret_less_35
+```
+
+The exception to this would be if you want to use this answer at some other point in the code or in your Markdown write-up.
+
+In Quarto, you can include [inline code](https://quarto.org/docs/get-started/computations/rstudio.html#inline-code) in your Markdown so the output would update if the original data changes -- this is great for **reproducibility**!!
+
+e.g.: `{r} top_secret_less_35` elements in the `top_secret` vector are less than .35. 
+
+### What is going on with \#'s?
+
+\#'s are used in three different ways in Quarto documents...
+
+1. In MARKDOWN, they define HEADERS
+2. In YAML, they are preceded by a pipe \| to define R CODE CHUNK OPTIONS
+3. In R CODE, they define a COMMENT
