@@ -1,5 +1,5 @@
 ---
-title: "Tidy Data and Basics of Graphics"
+title: "Importing Data and Basics of Graphics"
 format: 
   revealjs:
     #theme: [default, custom.scss]
@@ -160,46 +160,10 @@ library(readr)
 ```
 
 
-# Tidy Data
 
 ## Tidy Data
 
 ![Artwork by Allison Horst](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/85520b8f-4629-4763-8a2a-9ceff27458bf_rw_1920.jpg?h=21007b20ac00cf37318dca645c215453)
-
-## Same Data, Different Formats
-
-Different formats of the data are **tidy** in different ways.
-
-```{r tidy-data}
-#| echo: false
-bb_tidy_data <- tibble(Team     = c("A", "B", "C", "D"),
-                       Points   = c(88, 91, 99, 94),
-                       Assists  = c(12, 17, 24, 28),
-                       Rebounds = c(22, 28, 30, 31)
-                       )
-```
-
-::: panel-tabset
-### Option 1
-
-```{r}
-#| echo: false
-bb_tidy_data |> 
-  knitr::kable()
-```
-
-### Option 2
-
-```{r}
-#| echo: false
-bb_tidy_data |> 
-  pivot_longer(cols      = c(Points, Assists, Rebounds),
-               names_to  = "Statistic",
-               values_to = "Value"
-               ) |> 
-  knitr::kable()
-```
-:::
 
 ## Tidy Data
 
