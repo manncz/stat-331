@@ -33,7 +33,7 @@ Today we will...
 ## Comments from Week 1
 
 -   It is better to **not have spaces** in your directory or file names!
-    -   Use "stat_331" of "stat331" instead of "stat 331"!
+    -   Use "stat-331" or "stat331" instead of "stat 331"!
     -   Use "week_1" or "week1" instead of "week 1"!
     
 . . .
@@ -44,6 +44,9 @@ Today we will...
 . . .
 
 -   Make sure you **install** a package before you **load** it!
+
+
+
 
 ## Style Note of the Day - [Function Calls](https://style.tidyverse.org/syntax.html#argument-names)
 
@@ -295,9 +298,33 @@ Remember to load the `readr` and `readxl` packages first!
 </center>
 
 
+## Notebooks and File Paths
 
+- Quarto automatically sets the working directory to the be directory where the Quarto document is for any code **within** the Quarto document
+
+- This overrides the directory set by an .Rproj
+
+. . .
+
+::: columns
+::: {.column width="70%"}
+- Pay attention to this when setting relative filepaths
+
+    + To "backout" of one directory, use `"../"`
+    + e.g.: `"../data/dat.csv"`
+:::
+::: {.column width="30%"}  
+![](images/folder_structure.png)
+:::
+:::
+
+. . .
+
+- Alternatively, use the `here` package (see [textbook](https://manncz.github.io/stat331-calpoly-text/02-tidy-data-and-basics-of-graphics.html#the-here-package))
 
 # Grammar of Graphics
+
+## Why Do We Create Graphics?
 
 ## Grammar of Graphics
 
@@ -1139,7 +1166,7 @@ ggplot(data = mpg,
 -   **PA 2: Using Data Visualization to Find the Penguins**
     -   Due **Wednesday** (1/15) at 10:00am
 
-<!--#  STAT 331 Week 2 Day 2
+#  STAT 331 Week 2 Day 2
 
 ## Wednesday, January 15
 
@@ -1194,14 +1221,16 @@ Graphics consist of:
 
 Edward R. Tufte is a well-known critic of visualizations, and his definition of **graphical excellence** consists of:
 
+::: {.incremental}
 -   communicating complex ideas with **clarity, precision, and efficiency**.
 -   maximizing the **data-to-ink** ratio.
 -   using multivariate displays.
 -   telling the truth about the data.
+:::
 
 ## Graphics
 
--  When creating graphics, we need to think carefully about how we make structure and aesthetic decisions.
+-  When creating graphics, we need to think carefully about how we make structural and aesthetic decisions.
 -  This takes iteration and practice!
 
 # Gestalt Principles
@@ -1211,7 +1240,7 @@ Edward R. Tufte is a well-known critic of visualizations, and his definition of 
 Our brains have an amazing ability to create and perceive structure among visual objects.
 
 -   This is commonly referred to as the Gestalt principles of visual perception.
--   This framework can help us think about how to create the most expressive and effective data visualizations:
+-   This framework can help us think about how to create the most expressive and effective data visualizations
 
 ## Gestalt Principles
 
@@ -1492,12 +1521,18 @@ These packages have color palettes hthatare aesthetically pleasing and, in many 
 
 You can also take a look at other [ways to find nice color palettes](https://lisacharlottemuth.com/2016/04/22/Colors-for-DataVis/).
 
-## [Lab 2: Exploring Rodents with ggplot2](https://zoerehnberg.github.io/STAT331-S23/lab_assignments/lab2/LA2_ggplot.html)
+## Lab 2: Exploring Rodents with ggplot2
 
 ## To do...
 
 -   **Lab 2: Exploring Rodents with ggplot2**
-    -   due Saturday, 4/13 at 11:59pm
+    -   due Saturday, 1/18 at 11:59pm
 -   **Read Chapter 3: Data Cleaning and Manipulation**
-    -   **Check-in 3.1** due Monday 4/15 at 10:00am
--->
+    -   **Check-in 3.1** due *Tuesday 1/21* at 10:00am
+    
+    
+::: callout-warning
+## Class on Tuesday 1/21, not Monday 1/20
+Celebrate MLK day on Monday and come to class on Tuesday!
+:::
+    
