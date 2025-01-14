@@ -1347,6 +1347,8 @@ knitr::include_graphics("images/pre-atten2.png")
 
 -   E.g., color, form, movement, spatial location.
 
+. . .
+
 There is a **hierarchy** of features:
 
 -   Color is stronger than shape.
@@ -1483,7 +1485,47 @@ There are several packages with color scheme options:
 
 These packages have color palettes hthatare aesthetically pleasing and, in many cases, colorblind friendly.
 
-You can also take a look at other [ways to find nice color palettes](https://lisacharlottemuth.com/2016/04/22/Colors-for-DataVis/).
+You can also take a look at other [ways to find nice color palettes](https://lisacharlottemuth.com/2016/04/22/Colors-for-DataVis/). [ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) is my personal favorite.
+
+# What Do You Think About This Graphic?
+
+## Example 1
+
+
+```{r}
+#| out-width: 40%
+knitr::include_graphics("images/covid-model.jpg")
+```
+
+
+## Example 2
+
+::: columns
+::: {.column width="50%"}
+
+:::
+::: {.column width="50%"}
+```{r}
+#| out-width: 90%
+knitr::include_graphics("images/house-graphic.png")
+```
+:::
+:::
+
+## Example 3
+
+::: columns
+::: {.column width="50%"}
+
+:::
+::: {.column width="50%"}
+```{r}
+#| out-width: 90%
+knitr::include_graphics("images/we-line-chart-consumer-confidence.png")
+```
+:::
+:::
+
 
 ## Lab 2: Exploring Rodents with ggplot2
 
