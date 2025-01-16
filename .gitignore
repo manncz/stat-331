@@ -7,6 +7,12 @@
 # Large files
 *.xlsx
 
+libs/*
+
+
 # Non-sharable info
 solutions/*
 00-course-info/stud-info/*
+notes.md
+*_check.qmd
+*_check.html
