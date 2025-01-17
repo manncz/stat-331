@@ -248,7 +248,7 @@ Let’s compare the level of SET ratings for Question 3 (The professor used acti
 
 1. **includes responses for Question 3 only,**
 2. **creates a new variable called `set_level` that is “excellent” if the `SET_score_avg` is 4 or higher (inclusive) and “standard” otherwise,**
-3. **creates a new variable called `sen_level` that is “junior” if the instructor has been teaching for 4 years or less (inclusive), “senior” if between 5-8 years (inclusive), and "full" if more than 8 years**
+3. **creates a new variable called `sen_level` that is “junior” if the instructor has been teaching for 4 years or less (inclusive), “senior” if between 5-8 years (inclusive), and "very senior" if more than 8 years**
 4. **contains only the variables we are interested in – `course_id`, `set_level`, and `sen_level`.**
 
 
@@ -267,8 +267,6 @@ Helpful functions:  `if_else()`, `case_when()`
 ![](make_plot.png)
 
 ::: callout-tip
-You may notice that initially your seniority levels and set levels aren't in the same order as my plot! Factor variables are automatially ordered in alphabetical order, but that might not actually make sense for the application. You can re-order the levels of a factor variable using `factor( , levels = ___)`. You might want to look at the documentation or Google examples.
-
 Note that getting the general structure and reader friendly labels is good enough. I used Cal Poly's branded colors for fun, which use HEX codes `#BD8B13` and `#154734`.
 :::
 
