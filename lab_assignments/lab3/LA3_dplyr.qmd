@@ -135,7 +135,7 @@ It is not one instructor per row! It’s also not just one class per row!
 **4. Use one `dplyr` pipeline to clean the data by**
 
  - **renaming the `gender` variable `sex`, **
- - **removing all courses with fewer than 10 respondents,** 
+ - **removing all courses with fewer than 10 students (participants),** 
  - **changing data types in whichever way you see fit (e.g., is the instructor ID really a numeric data type?), and** 
  - **only keeping the columns we will use -- `course_id`, `teacher_id`, `question_no`, `no_participants`, `resp_share`, `SET_score_avg`, `percent_failed_cur`, `academic_degree`, `seniority`, and `sex`.**
  
