@@ -3,6 +3,7 @@ title: "Data Cleaning & Manipulation"
 format: 
   revealjs:
         theme: default
+        auto-stretch: true
 editor: source
 embed-resources: true
 ---
@@ -1521,7 +1522,7 @@ Use `kable()` from the `knitr` package and the `kableExtra` package to format ta
 ```{r}
 #| echo: true
 #| eval: false
-#| code-line-numbers: '17'
+#| code-line-numbers: '7'
 cereal |> 
   select(sugars, shelf) |> 
   filter(sugars != -1) |> 
@@ -1542,7 +1543,7 @@ cereal |>
   summarise(med_sugars = median(sugars),
             n_cereal = n()) |> 
   kable() |> 
-  kableExtra::scroll_box(height = "225px") |> 
+  kableExtra::scroll_box(height = "150px") |> 
   kableExtra::kable_styling(font_size = 30)
 ```
 :::
@@ -1610,6 +1611,15 @@ cereal |>
 **I would love to discuss these with you in office hours!**
 
 ## Lab 3: Teacher Evaluations
+
+## Lab Formatting
+
+- I changed my mind! (thanks for your patience)
+- Remove extraneous instructions from a starter .qmd file
+- Your final lab submission should only include necessary information to read like a report from the starter .qmd file including:
+  + appropriate section headers
+  + information about the data 
+  + question numbers and descriptions
 
 ## To do...
 
