@@ -17,16 +17,16 @@ library(tidyverse)
 library(readxl)
 ```
 
-Download [.qmd]("W4_starts_notes.qmd")
+Download [.qmd](W4_starter_notes.qmd)
 
 ::: callout-warning
 Download the data that we will be using this week at the followings links and add them to a `data/` directory
 
-[IMDb data]("data/imdb_data.Rdata")
+[IMDb data](data/imdb_data.Rdata)
 
-[Rainfall data]("data/2023-rainfall-slo.xlsx")
+[Rainfall data](data/2023-rainfall-slo.xlsx)
 
-[Eras Tour data]("data/TS_data.xlsx")
+[Eras Tour data](data/TS_data.xlsx)
 :::
 
 
