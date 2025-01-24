@@ -5,7 +5,7 @@
 *.Rhistory
 
 # Large files
-*.xlsx
+
 
 libs/*
 
