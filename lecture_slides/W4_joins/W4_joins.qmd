@@ -1,0 +1,2332 @@
+---
+title: "Data Joins + Pivots + Factors"
+format: 
+  revealjs:
+    theme: default
+editor: source
+embed-resources: true
+---
+
+```{r setup}
+#| include: false
+#| message: false
+library(tidyverse)
+library(palmerpenguins)
+library(ggridges)
+```
+
+
+# STAT 331 Week 4 Day 1
+
+## Monday, January 27
+
+Today we will...
+
+-   Comments from Week 3
+-   New Material
+    -   Pivoting data with `tidyr`
+    -   Joining data with `dplyr`
+-   PA 4: Military Spending
+
+## Comments from Week 3
+
+-  Work on the lab early!
+    + Make sure images are rendering - ask for help in class or office hours on this!
+    + Get an idea of how long it may take and what any big challenges are
+  
+- Be thoughtful about use of color in plots
+
+- Avoid long lines of code - introduce line breaks
+
+# Big Picture - Data Science Workflow
+
+## Data Science Process
+
+```{r}
+#| out-width: "90%"
+#| fig-align: center
+knitr::include_graphics("images/data-science-workflow.png")
+```
+
+Adapted from [r4ds](https://r4ds.hadley.nz/intro#fig-ds-diagram)
+
+## We have covered...
+
+```{r}
+#| out-width: "90%"
+#| fig-align: center
+knitr::include_graphics("images/data-science-workflow-sofar.png")
+```
+
+## Today
+
+```{r}
+#| out-width: "90%"
+#| fig-align: center
+knitr::include_graphics("images/data-science-workflow-today.png")
+```
+
+# Building an Analytical Dataset
+
+## Getting Data
+
+-   So far, we have simply needed to import *one* nice *rectangular* data set in a *typical* file type
+-   Real life often gets a bit more complicated!!
+
+
+
+## Motivating (Real) Example[^1]
+
+:::{.incremental}
+-   Texas Education Data (AEIS): K-12 student performance data provided by the Texas Education Agency
+-   Provides A LOT of information ... in [many separate files](https://rptsvr1.tea.texas.gov/perfreport/aeis/2005/xplore/DownloadSelData.html):
+    -   by year
+    -   for State, Regions, Districts, or Schools
+    -   for different sets of variables
+:::
+
+. . .
+
+🧐 need to get this #%$ together before we can analyze it
+
+[^1]: I worked with this data for a project. See the [paper](https://educationaldatamining.org/edm2024/proceedings/2024.EDM-short-papers.52/2024.EDM-short-papers.52.pdf) and [Github repo](https://github.com/manncz/aeis-aux-rct/) if you are interested!
+
+## Relational Data
+:::{.incremental}
+-   Multiple, interconnected tables of data are called **relational**.
+-   Individual datsets may not provide exactly what we need - but we can use the *relation* between datasets to get the information we want.
+:::
+. . .
+
+![IMDb movie relational data](images/imdb_relational.png)
+
+```{r imdb-data}
+#| eval: false
+#| include: false
+#| message: false
+#| warning: false
+library(RMariaDB)
+library(dm)
+`
+# IMDb
+con <- dbConnect(
+  drv = RMariaDB::MariaDB(), 
+  username = "guest",
+  password = "relational", 
+  host = "relational.fit.cvut.cz", 
+  port = 3306,
+  dbname = "imdb_small")
+dbListTables(con)
+
+my_dm <- dm_from_src(con)
+
+actors <- my_dm$actors |> 
+  as.data.frame()
+write_csv(actors, "data/actors.csv", na = "")
+
+directors <- my_dm$directors |> 
+  as.data.frame()
+write_csv(directors, "data/directors.csv", na = "")
+
+directors_genres <- my_dm$directors_genres |> 
+  as.data.frame()
+write_csv(directors_genres, "data/directors_genres.csv", na = "")
+
+movies <- my_dm$movies |> 
+  as.data.frame()
+write_csv(movies, "data/movies.csv", na = "")
+
+movies_directors <- my_dm$movies_directors |> 
+  as.data.frame()
+write_csv(movies_directors, "data/movies_directors.csv", na = "")
+
+movies_genres <- my_dm$movies_genres |> 
+  as.data.frame()
+write_csv(movies_genres, "data/movies_genres.csv", na = "")
+
+roles <- my_dm$roles |> 
+  as.data.frame()
+write_csv(roles, "data/roles.csv", na = "")
+
+dbDisconnect(con)
+rm(con, my_dm)
+```
+
+```{r imdb-data2}
+#| eval: false
+#| include: false
+#| message: false
+#| warning: false
+
+save(actors, roles, 
+     directors, directors_genres,
+     movies, movies_directors,
+     movies_genres, 
+     file = "data/imdb_data.Rdata")
+```
+
+```{r imdb-data3}
+#| eval: true
+#| include: false
+#| message: false
+#| warning: false
+
+# actors <- read_csv("data/actors.csv")
+# directors <- read_csv("data/directors.csv")
+# directors_genres <- read_csv("data/directors_genres.csv")
+# movies <- read_csv("data/movies.csv")
+# movies_directors <- read_csv("data/movies_directors.csv")
+# movies_genres <- read_csv("data/movies_genres.csv")
+# roles <- read_csv("data/roles.csv")
+
+load("data/imdb_data.Rdata")
+```
+
+## Example - IMDb Movie Data
+
+::: callout-note
+# Discussion
+
+What if we want to know which actor has worked with the most directors in the dataset?
+
+What **analytical dataset** would we need to answer this question? What are the rows, and variables needed?
+:::
+
+![](images/imdb_relational.png)
+
+## Example - IMDb Movie Data
+
+::: callout-note
+# Discussion
+
+What if we want to know which actor has worked with the most directors in the dataset?
+
+What **analytical dataset** would we need to answer this question? What are the rows, and variables needed?
+:::
+
+. . .
+
+-  💡 In order to answer our question, we need to **combine** some of the individual datasets into one big dataset
+-   **Joins!**
+
+# Data Joins
+
+## Data Joins
+
+We can **combine** (join) data tables based on their relations.
+
+::: columns
+::: column
+**Mutating joins**
+
+Add *variables* from a new dataframe to observations in an existing dataframe.
+
+`full_join()`, `left_join()`, `right_join()`, `inner_join()`, `outer_join()`
+:::
+
+::: column
+**Filtering Joins**
+
+Filter *observations* based on values in new dataframe.
+
+`semi_join()`, `anti_join()`
+:::
+:::
+
+## Keys
+
+Some combination of variables (should) uniquely identify an observation in a data set.
+
+-   To combine (join) two datasets, a **key** needs to be present in both.
+
+. . .
+
+![](images/imdb-keys.png)
+
+## General Structure of a Join
+
+::: columns
+::: {.column width="60%"}
+::: incremental
+-   Choose a **left** and a **right** dataset
+-   Add or remove **rows** based on the type of join and the structure of the left vs. right data
+-   Add **columns** (or not) based on the type of join and the and the structure of the left vs. right data
+:::
+:::
+
+::: {.column width="40%"}
+![](images/join_xy.png)
+:::
+:::
+
+## `inner_join()`
+
+Keeps observations when their keys are present in **both** datasets.
+
+::: columns
+::: {.column width="50%"}
+![](images/join_xy.png)
+:::
+
+::: {.column width="50%"}
+![](images/inner_join.png)
+:::
+:::
+
+. . .
+
+::: callout-note
+# Discussion
+
+When would you want to use `inner_join()`?
+:::
+
+## `inner_join()`: IMDb Example
+
+```{r}
+directors_genres_subset <- directors_genres |>
+  filter(director_id %in% c(429, 2931, 11652, 14927, 15092)) |> 
+  group_by(director_id) |> 
+  slice_max(order_by = prob, n = 2, with_ties = F)
+
+movies_directors_subset <- movies_directors |> 
+  filter(director_id %in% c(429, 9247, 11652, 14927, 15092))
+
+directors_subset <- directors |> 
+  filter(id %in% c(429, 9247, 11652, 14927, 15092))
+```
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+directors_genres
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors_genres_subset |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "160px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+movies_directors
+```
+
+```{r}
+#| eval: true
+#| echo: false
+movies_directors_subset |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "160px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+:::
+
+<font size = 6>
+
+ID: 429, **2931**, 11652, 14927, 15092       ID: 429, **9247**, 11652, 14927, 15092
+
+</font>
+
+. . .
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+inner_join(directors_genres, movies_directors, 
+           by = "director_id")
+```
+
+```{r}
+#| eval: true
+#| echo: false
+inner_join(directors_genres_subset, movies_directors_subset) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "160px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+<font size = 6>
+
+ID: 429, ~~**2931**~~, ~~**9247**~~, 11652, 14927, 15092
+
+</font>
+
+## `inner_join()`: IMDb Example
+
+What if our **key** does not have the same name?
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+directors_genres
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors_genres_subset |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "130px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+directors
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors_subset |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "130px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+:::
+
+. . .
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "3"
+inner_join(directors_genres, 
+           directors, 
+           by = join_by(director_id == id))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+inner_join(directors_subset,
+           directors_genres_subset,
+           join_by(id == director_id)) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "170px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+<font size = 6> Join by different variables on `dataX` and `dataY`: `join_by(a == b)` will match `dataX$a` to `dataY$b`. </font>
+
+## Piping Joins
+
+Remember: the dataset you pipe in becomes the **first argument** of the function you are piping into!
+
+-   If you are using a pipe,
+    -   the piped in data is the **left** dataset
+    -   specify the **right** dataset inside the `join` function.
+
+. . .
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+inner_join(directors_genres, movies_directors)
+```
+
+...is equivalent to...
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: false
+directors_genres |> 
+  inner_join(movies_directors, by = "director_id")
+```
+
+## More Mutating Joins
+
+-   `left_join()` -- keep only (and all) observations present in the left data set
+
+-   `right_join()` -- keep only (and all) observations present in the right data set
+
+-   `full_join()` -- keep only (and all) observations present in **both** data sets
+
+<center>![](images/joins.png){width="70%"}</center>
+
+## Why Use a Certain Mutating Join?
+
+::: incremental
+<font size = 6>
+
+-   `inner_join()`
+    -   You want all of the columns from both left and right data and only to include the observations that have information in both
+-   `left_join()`
+    -   The left dataset is your "main" data and you just want to add information (columns) from the right dataset
+-   `right_join()`
+    -   The right data is your "main data" and you just want to add columns from the left dataset
+-   `full_join()`
+    -   You want all of the columns from both left and right data for all of the observations possible
+
+</font>
+:::
+
+## Which Join?
+
+::: callout-note
+# Discussion
+
+How many movies are there in the data for each director (by name), including if any directors don't have any movies in the data? **Which join should I use??**
+:::
+
+```         
+directors |> 
+  ??_join(movies_directors, 
+          by = join_by("id" == "director_id"))
+```
+
+<br>
+
+::: columns
+::: column
+```{r}
+#| eval: false
+#| echo: true
+directors |> 
+  slice_head(n = 5)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors |> 
+  slice_head(n = 5) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+:::
+
+::: column
+```{r}
+#| eval: false
+#| echo: true
+movies_directors |> 
+  slice_head(n = 5)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+movies_directors |> 
+  slice_head(n = 5) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+:::
+:::
+
+
+## Which Join?
+
+::: callout-note
+# Discussion
+
+What is the complete set movies and actors included in the data? **Which join should I use??**
+:::
+
+```         
+roles |> 
+  ??_join(actors, 
+          by = join_by("actor_id" == "id"))
+```
+
+<br>
+
+::: columns
+::: column
+```{r}
+#| eval: false
+#| echo: true
+roles |> 
+  slice_head(n = 5)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+roles |> 
+  slice_head(n = 5) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+:::
+
+::: column
+```{r}
+#| eval: false
+#| echo: true
+actors |> 
+  slice_head(n = 5)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+actors |> 
+  slice_head(n = 5) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+:::
+:::
+
+## Filtering Joins: `semi_join()`
+
+Keeps observations when their keys are present in **both** datasets, **but only keeps variables from the *left* dataset**.
+
+::: columns
+::: {.column width="60%"}
+![](images/semi1.png)
+:::
+
+::: {.column width="15%"}
+<br>
+
+::: r-fit-text
+→  
+:::
+:::
+
+::: {.column width="25%"}
+![](images/semi2.png)
+:::
+:::
+
+## IMDb Data Example
+
+::: columns
+::: column
+```{r}
+#| eval: false
+#| echo: true
+directors_genres |> 
+  distinct(director_id)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors_genres_subset |> 
+  distinct(director_id) |> 
+  knitr::kable() |> 
+  kableExtra::row_spec(2, bold = T, color = "red") |>
+  kableExtra::scroll_box(height = "320px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+
+::: column
+```{r}
+#| eval: false
+#| echo: true
+movies_directors |> 
+  distinct(director_id)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+movies_directors_subset |> 
+  distinct(director_id) |> 
+  knitr::kable() |> 
+  kableExtra::row_spec(2, bold = T, color = "red") |>
+  kableExtra::scroll_box(height = "320px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+:::
+
+## Filtering Joins: `semi_join()`
+
+::: panel-tabset
+### `semi_join()`
+
+```{r}
+#| echo: true
+#| eval: false
+directors_genres |> 
+  semi_join(movies_directors)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+semi_join(directors_genres_subset, movies_directors_subset) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "320px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+Movie Directors: 429, ~~**2931**~~, 11652, 14927, 15092
+
+### Connection to `filter()`
+
+```{r}
+#| echo: true
+#| eval: false
+directors_genres |>
+  filter(director_id %in% movies_directors$director_id)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors_genres_subset |>
+  filter(director_id %in% movies_directors_subset$director_id) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "320px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+
+## Filtering Joins: `anti_join()`
+
+**Removes** observations when their keys are present in **both** datasets, and **only keeps variables from the *left* dataset**.
+
+::: columns
+::: {.column width="60%"}
+![](images/semi1.png)
+:::
+
+::: {.column width="15%"}
+<br>
+
+::: r-fit-text
+→  
+:::
+:::
+
+::: {.column width="25%"}
+<br>
+
+![](images/anti2.png)
+:::
+:::
+
+## Filtering Joins: `anti_join()`
+
+::: panel-tabset
+### `anti_join()`
+
+```{r}
+#| echo: true
+#| eval: false
+directors_genres |> 
+  anti_join(movies_directors)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+anti_join(directors_genres_subset, movies_directors_subset) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+Movie Directors: ~~429~~, **2931**, ~~11652~~, ~~14927~~, ~~15092~~
+
+### Connection to `filter()`
+
+```{r}
+#| echo: true
+#| eval: false
+directors_genres |>
+  filter(!director_id %in% movies_directors$director_id)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors_genres_subset |>
+  filter(!director_id %in% movies_directors_subset$director_id) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+:::
+
+## Building an Analytical Dataset
+
+Now we have tools to:
+
+-   Combine multiple data sets (`xx_join()`)
+-   Subset to certain observations (`filter()` and `xx_join()`)
+-   Create new variables (`mutate()`)
+-   Select columns of interest (`select()`)
+
+. . .
+
+We are well on our way to building and cleaning up a nice dataset! 🥳
+
+## Transform and Tidy
+
+What's next?
+
+```{r}
+#| out-width: "90%"
+#| fig-align: center
+knitr::include_graphics("images/data-science-workflow.png")
+```
+
+## Transform and Tidy
+
+What's next?
+
+We may need to **transform** our data to turn it into the **version of tidy** that is best for a task at hand.
+
+![Allison Horst](https://www.openscapes.org/img/blog/tidydata/tidydata_4.jpg)
+
+# Reshaping Data Layouts with Pivots
+
+## Creating Tidy Data
+
+Let's say we want to look at `mean` **cereal nutrients** based on `shelf`.
+
+. . .
+
+-   The data are in a **wide** format -- a separate column for each nutrient.
+
+```{r}
+#| echo: true
+#| eval: false
+library(liver)
+data(cereal)
+head(cereal)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+library(liver)
+data(cereal)
+head(cereal) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "210px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Creating Tidy Data
+
+::: callout-note
+# Discussion
+
+How would we plot the mean cereal nutrients by shelf (as shown below) with the wide data using `ggplot2`?
+:::
+
+```{r}
+#| echo: false
+#| fig-align: "center"
+
+cereal |> 
+  pivot_longer(cols = calories:vitamins,
+               names_to = "Nutrient",
+               values_to = "Amount") |> 
+  group_by(shelf, Nutrient) |> 
+  summarise(mean_amount = mean(Amount)) |> 
+  ggplot(aes(x = shelf, 
+             y = mean_amount, 
+             color = Nutrient)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Shelf", y = "", subtitle = "Mean Amount")
+```
+
+. . .
+
+**Transforming** the data will make plotting **much** easier
+
+## Creating Tidy Data
+
+::: panel-tabset
+## Wide
+
+```{r}
+#| echo: true
+#| code-line-numbers: "2-3"
+#| code-fold: true
+cereal_wide <- cereal |> 
+  group_by(shelf) |> 
+  summarise(across(calories:vitamins, mean))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+cereal_wide|> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "210px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Wide Plot
+
+```{r}
+#| echo: true
+#| code-line-numbers: "5-8"
+#| fig-height: 4
+#| fig-width: 6
+#| fig-align: center
+#| code-fold: true
+my_colors <- c("calories_col" = "steelblue", "sugars_col" = "orange3")
+
+cereal_wide |> 
+  ggplot() +
+  geom_point(aes(x = shelf, y = calories, color = "calories_col")) +
+  geom_line(aes(x = shelf, y = calories, color = "calories_col")) + 
+  geom_point(aes(x = shelf, y = sugars, color = "sugars_col")) +
+  geom_line(aes(x = shelf, y = sugars, color = "sugars_col")) +
+  scale_color_manual(values = my_colors, labels = names(my_colors)) +
+  labs(x = "Shelf", y = "", subtitle = "Mean Amount", color = "Nutrient")
+```
+
+## Long
+
+```{r}
+#| echo: true
+#| code-line-numbers: "5-6"
+#| code-fold: true
+cereal_long<- cereal |> 
+  pivot_longer(cols = calories:vitamins,
+               names_to = "Nutrient",
+               values_to = "Amount") |> 
+  group_by(shelf, Nutrient) |> 
+  summarise(mean_amount = mean(Amount))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+cereal_long |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "400px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Long Plot
+
+```{r}
+#| echo: true
+#| code-line-numbers: "2-4"
+#| fig-height: 4
+#| fig-width: 6
+#| fig-align: center
+#| code-fold: true
+cereal_long |> 
+  ggplot(aes(x = shelf, 
+             y = mean_amount, 
+             color = Nutrient)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Shelf", y = "", subtitle = "Mean Amount")
+```
+:::
+
+## Data Layouts
+
+
+![Kelsey Gonzalez](https://github.com/gadenbuie/tidyexplain/raw/main/images/static/png/original-dfs-tidy.png){width="60%"} 
+
+
+
+## Manual Method
+
+Consider daily rainfall observed in SLO in January 2023.
+
+-   The data is in a human-friendly form (like a calendar).
+-   Each week has a row, and each day has a column.
+
+![[Data source](cesanluisobispo.ucanr.edu)](images/slo-rainfall.jpg)
+
+::: callout-note
+# Discussion
+
+How would you **manually** convert this to **long format**?
+:::
+
+## Manual Method: Steps
+
+0.  Keep the column `Week`.
+1.  Create a new column `Day_of_Week`.
+2.  Create a new column `Rainfall` (hold daily rainfall values).
+3.  Now we have three columns -- move Sunday values over.
+4.  Duplicate `Week` 1-5 and copy Monday values over.
+
+<center>![](images/pivot_rain2.png){width="25%"}</center>
+
+5.  Repeat ...
+
+## Computational Approach
+
+![](images/slo-rainfall-sketch.png)
+
+We can use `pivot_longer()` to turn a **wide** dataset into a **long(er)** dataset.
+
+## `pivot_longer()`
+
+Take a **wide** dataset and turn it into a **long** dataset.
+
+-   `cols` -- specify the columns that should be pivoted.
+    -   Do **not** include the names of ID columns (columns to not be pivoted).
+-   `names_to` -- the name of the new column containing the old column names.
+-   `values_to` -- the name of the new column containing the old column values.
+
+## `pivot_longer()`
+
+```{r}
+#| echo: true
+#| eval: false
+slo_rainfall |> 
+  pivot_longer(cols      = Sunday:Saturday,
+               names_to  = "Day_of_Week",
+               values_to = "Daily_Rainfall")
+```
+
+```{r}
+#| eval: true
+#| echo: false
+library(readxl)
+slo_rainfall <- read_xlsx("data/2023-rainfall-slo.xlsx")
+
+slo_rainfall |> 
+  mutate(across(Sunday:Saturday, as.numeric)) |> 
+  pivot_longer(cols      = Sunday:Saturday,
+               names_to  = "Day_of_Week",
+               values_to = "Daily_Rainfall")|> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "500px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Long to Wide
+
+What are the `mean` amount of `protein` for cereals on each `shelf` and for each `manuf`?
+
+```{r}
+#| echo: true
+#| eval: false
+mean_protein <- cereal |> 
+  group_by(manuf, shelf) |> 
+  summarize(mean_protein = mean(protein))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+mean_protein <- cereal |> 
+  group_by(manuf, shelf) |> 
+  summarize(mean_protein = mean(protein))
+
+mean_protein |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+::: callout-note
+# Discussion
+
+What could we do to make this table easier to understand?
+:::
+
+## `pivot_wider()`
+
+Take a **long** dataset and turn it into a **wide** dataset.
+
+-   `id_cols` -- specify the column(s) that contain the ID for unique rows in the wide dataset.
+-   `names_from` -- the name of the column containing the new column names.
+-   `values_from` -- the name of the column containing the new column values.
+
+## `pivot_wider()`
+
+Much easier to read!
+
+```{r}
+#| eval: false
+#| echo: true
+mean_protein |> 
+  arrange(shelf) |> 
+  pivot_wider(id_cols = manuf,
+              names_from = shelf,
+              values_from = mean_protein)
+```
+
+```{r}
+#| eval: true
+#| echo: false
+mean_protein |> 
+  arrange(shelf) |> 
+  pivot_wider(id_cols = manuf,
+              names_from = shelf,
+              values_from = mean_protein) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "420px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Better names in `pivot_wider()`
+
+Even better!
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "6"
+mean_protein |> 
+  arrange(shelf) |> 
+  pivot_wider(id_cols = manuf,
+              names_from = shelf,
+              values_from = mean_protein,
+              names_prefix = "Shelf_")
+```
+
+```{r}
+#| eval: true
+#| echo: false
+mean_protein |> 
+  arrange(shelf) |> 
+  pivot_wider(id_cols = manuf,
+              names_from = shelf,
+              values_from = mean_protein,
+              names_prefix = "Shelf_") |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "400px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## PA 4: Military Spending
+
+Today you will be tidying messy data to explore the relationship between countries of the world and military spending.
+
+## Resources - use them all!
+
+::: columns
+::: {.column width="50%"}
+- `dplyr` and `tidyr` [cheatsheets](https://posit.co/resources/cheatsheets/)
+- slides and textbook
+- help files
+:::
+::: {.column width="50%"}
+- ⭐️️ **each other**⭐️ 
+- and me 😎
+:::
+:::
+
+. . .
+
+[**Don't struggle individually for too long!**]{style="color:green;"}
+
+
+## Productive challenge and struggle
+
+![Allison Horst](images/debugging_feelings.png)
+
+
+## To do...
+
+-   **PA 4: Military Spending**
+    -   Due Wednesday, 1/29 at 10:00am
+
+# STAT 331 Week 4 Day 2
+
+## Wednesday, January 29
+
+Today we will...
+
+-   Notes on Lab 3
+-   New Material
+    -   Extensions to Data Joins
+    -   Factors with `forcats`
+    -   Clean Variable Names
+    -   Lifecycle Stages
+-   Lab 4: Childcare Costs in California
+
+## Notes on Lab 3
+
+
+# Extensions to Relational Data
+
+## Relational Data Reminder - Keys
+
+When we work with relational data, we rely on **keys**.
+
+-   A key uniquely identifies an observation in a dataset.
+-   A key allows us to relate datasets to each other
+
+## IMDb Movies Data
+
+![](images/imdb-keys.png)
+
+**What were the active years of each director?**
+
+::: callout-note
+# Discussion
+
+Which datasets do we need to use to answer this question?
+:::
+
+## Joining Multiple Data Sets
+
+::: panel-tabset
+### Data
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| eval: false
+movies_directors |> 
+  slice_head(n = 4)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+movies_directors |> 
+  slice_head(n = 4) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 20)
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| eval: false
+directors |> 
+  slice_head(n = 4)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+directors |> 
+  slice_head(n = 4) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 20)
+```
+:::
+:::
+
+::: columns
+::: {.column width="25%"}
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| eval: false
+movies |> 
+  slice_head(n = 4)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+movies |> 
+  slice_head(n = 4) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 20)
+```
+:::
+:::
+
+### Sketch
+
+```{r}
+#| out-width: "90%"
+#| fig-align: center
+knitr::include_graphics("images/multiple_joins.png")
+```
+
+### 1st + 2nd
+
+```{r}
+#| echo: true
+#| eval: false
+movies_directors |> 
+  inner_join(directors, 
+             join_by(director_id == id))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+movies_directors |> 
+  inner_join(directors, 
+             join_by(director_id == id)) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "400px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+### + 3rd
+
+```{r}
+#| echo: true
+#| eval: false
+movies_directors |> 
+  inner_join(directors, 
+             join_by(director_id == id)) |> 
+  inner_join(movies,
+             join_by(movie_id == id))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+movies_directors |> 
+  inner_join(directors, 
+             join_by(director_id == id)) |> 
+  inner_join(movies,
+             join_by(movie_id == id)) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "300px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+### Analysis
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "6-10"
+
+movies_directors |> 
+  inner_join(directors, 
+             join_by(director_id == id)) |> 
+  inner_join(movies,
+             join_by(movie_id == id)) |> 
+  group_by(first_name, last_name) |>
+  summarize(start_year = min(year),
+            end_year = max(year)) |> 
+  mutate(n_years_active = end_year - start_year) |> 
+  arrange(desc(n_years_active))
+```
+
+```{r}
+#| echo: false
+#| eval: true
+
+movies_directors |> 
+  inner_join(directors, 
+             join_by(director_id == id)) |> 
+  inner_join(movies,
+             join_by(movie_id == id)) |> 
+  group_by(first_name, last_name) |>
+  summarize(start_year = min(year),
+            end_year = max(year)) |> 
+  mutate(n_years_active = end_year - start_year) |> 
+  arrange(desc(n_years_active)) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+:::
+
+## Know Your Unique Observations!
+
+::: callout-note
+# Discussion
+
+What is the observational unit after joining the `directors` and `movies_directors` by the `director_id` key? What happens for directors that have multiple movies in the `movies_directors` data?
+:::
+
+. . .
+
+```{r}
+#| echo: true
+#| eval: false
+directors |> 
+  inner_join(movies_directors, 
+             join_by(id == director_id))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+directors |> 
+  inner_join(movies_directors, 
+             join_by(id == director_id)) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "300px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Know Your Unique Observations!
+
+Remember the `rodent` data from Lab 2. Say we had separate datsets for measurements and species information:
+
+
+```{r}
+rodent <- read_csv("../../lab_assignments/lab2/surveys.csv")
+species <- rodent |> 
+  select(genus:taxa, species_id) |> 
+  distinct()
+
+measurements <- rodent |> 
+  select(genus, species, sex:weight) |> 
+  rename(genus_name = genus)
+```
+
+::: panel-tabset
+## Species
+
+```{r}
+#| echo: true
+#| eval: false
+species
+```
+
+```{r}
+#| eval: true
+#| echo: false
+species |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "300px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+## Measurements
+
+```{r}
+#| echo: true
+#| eval: false
+measurements
+```
+
+```{r}
+#| eval: true
+#| echo: false
+measurements[1:100,] |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "300px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+:::
+
+## Know Your Unique Observations!
+
+::: callout-note 
+# Discussion
+
+What happens if we join `species` and `measurements` by the genus only?
+:::
+
+
+
+```{r}
+#| echo: true
+#| eval: false
+measurements |> 
+  inner_join(species, 
+             by = join_by(genus_name == genus))
+```
+
+
+```{r}
+#| eval: true
+#| echo: false
+measurements |> 
+  inner_join(species, 
+             by = join_by(genus_name == genus)) |> 
+  slice_head(n = 100) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "150px") |> 
+  kableExtra::kable_styling(font_size = 20)
+```
+
+. . .
+
+::: callout-important
+# DANGER : MANY-TO-MANY JOIN!
+
+Our observations exploded and the `species_id` isn't even right for some observations! We also now have a `species.x` and `species.y` variable since the variable was present in both the left and right data.
+::: 
+
+
+
+## Joining on Multiple Variables
+
+To fix this, we need to join on multiple variables (a compound key):
+
+```{r}
+#| echo: true
+#| eval: false
+species |> 
+  full_join(measurements,
+            join_by(species == species, 
+                    genus == genus_name))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+species |> 
+  full_join(measurements,
+            join_by(species == species, 
+                    genus == genus_name)) |> 
+  slice_head(n = 100) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "250px") |> 
+  kableExtra::kable_styling(font_size = 30)
+```
+
+
+
+
+# Factor Variables
+
+## What is a factor variable?
+
+Factors are used for
+
+1.  categorical variables with a fixed and known set of possible values.
+
+-   E.g., `day_born` = Sunday, Monday, Tuesday, ..., Saturday
+
+2.  displaying character vectors in non-alphabetical order.
+
+- useful for nice tables and plots!
+
+## Eras Tour
+
+Let's consider songs that Taylor Swift played on her Eras Tour.
+
+I have randomly selected 25 songs (and their albums) to demonstrate.
+
+```{r}
+#| echo: false
+set.seed(2)
+full_eras <- read_excel("data/TS_data.xlsx", sheet = 1)
+eras_data <- full_eras |> 
+  slice_sample(n = 25) |> 
+  select(Song, Album)
+```
+
+```{r}
+#| echo: true
+#| eval: false
+eras_data |> 
+  slice_head(n = 10)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+eras_data |> 
+  slice_head(n = 10) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "450px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+
+## Creating a Factor -- Base `R`
+
+A **character** vector:
+
+```{r}
+#| echo: true
+eras_data |> 
+  pull(Album)
+```
+
+. . .
+
+A **factor** vector:
+
+```{r}
+#| echo: true
+eras_data |> 
+  pull(Album) |> 
+  factor()
+```
+
+## Creating a Factor -- Base `R`
+
+When you create a factor variable from a vector...
+
+-   Every unique element in the vector becomes a **level**.
+-   The levels are ordered alphabetically.
+-   The elements are no longer displayed in quotes.
+
+## Creating a Factor -- Base `R`
+
+You can **specify the order of the levels** with the `level` argument.
+
+```{r}
+#| echo: true
+eras_data |> 
+  pull(Album) |> 
+  factor(levels = c("Fearless","Speak Now","Red","1989",
+                    "Reputation","Lover","Folklore",
+                    "Evermore","Midnights"))
+```
+
+## `forcats`
+
+::: columns
+::: {.column width="80%"}
+We use this package to...
+
+-   turn character variables into factors.
+
+-   make factors by discretizing numeric variables.
+
+-   rename or reorder the levels of an existing factor.
+:::
+
+::: {.column width="20%"}
+```{r}
+#| fig-align: center
+knitr::include_graphics("https://github.com/rstudio/hex-stickers/blob/main/thumbs/forcats.png?raw=true")
+```
+:::
+:::
+
+::: callout-note
+The packages `forcats` ("for categoricals") helps wrangle categorical variables.
+
+-   `forcats` loads with `tidyverse`!
+:::
+
+## Creating a Factor -- `fct`
+
+With `fct()`, the levels are automatically ordered in the **order of first appearance**.
+
+```{r}
+#| echo: true
+eras_data |> 
+  mutate(Album = fct(Album)) |> 
+  pull(Album)
+```
+
+
+## Creating a Factor -- `fct`
+
+You can still **specify the order of the levels** with `level`.
+
+```{r}
+#| echo: true
+eras_data |> 
+  mutate(Album = fct(Album,
+                     levels = c("Fearless","Speak Now","Red",
+                                "1989", "Reputation","Lover",
+                                "Folklore", "Evermore","Midnights"))) |> 
+  pull(Album) 
+```
+
+## Creating a Factor -- `fct`
+
+You can also **specify non-present levels**.
+
+```{r}
+#| echo: true
+#| code-line-numbers: "3,7"
+eras_data |> 
+  mutate(Album = fct(Album, 
+                     levels = c("Taylor Swift",
+                                "Fearless","Speak Now","Red",
+                                "1989", "Reputation","Lover",
+                                "Folklore", "Evermore","Midnights",
+                                "The Tortured Poets Department"))) |> 
+  pull(Album) 
+```
+
+```{r}
+#| echo: false
+eras_data <- eras_data |> 
+  mutate(Album = fct(Album,
+                     levels = c("Taylor Swift",
+                                "Fearless","Speak Now","Red",
+                                "1989","Reputation","Lover",
+                                "Folklore","Evermore","Midnights",
+                                "The Tortured Poets Department")))
+```
+
+## Re-coding a Factor -- `fct_recode`
+
+Oops, we have a typo in some of our levels! We change existing levels with the syntax `<new level> = <old level>`.
+
+. . .
+
+```{r}
+#| echo: true
+eras_data |>
+  mutate(Album = fct_recode(.f = Album,
+                            "folklore" = "Folklore",
+                            "evermore" = "Evermore",
+                            "reputation" = "Reputation")) |>
+  pull(Album) 
+```
+
+```{r}
+#| echo: false
+eras_data <- eras_data |>
+  mutate(Album = fct_recode(.f = Album,
+                            "folklore" = "Folklore",
+                            "evermore" = "Evermore",
+                            "reputation" = "Reputation"))
+```
+
+. . .
+
+**Non-specified levels are not re-coded.**
+
+## Re-coding a Factor -- `case_when`
+
+We have similar functionality with the `case_when()` function...
+
+. . .
+
+```{r}
+#| echo: true
+eras_data |>
+  mutate(Album = case_when(Album == "Folklore" ~ "folklore",
+                           Album == "Evermore" ~ "evermore",
+                           Album == "Reputation" ~ "reputation",
+                           .default = Album),
+         Album = fct(Album)) |> 
+  pull(Album)
+```
+
+## Collapsing a Factor --`fct_collapse`
+
+Collapse multiple existing levels of a factor with the syntax `<new level> = c(<old levels>)`.
+
+. . .
+
+```{r}
+#| echo: true
+#| eval: false
+eras_data |> 
+  mutate(Genre = fct_collapse(.f= Album,
+                       "country pop" = c("Taylor Swift", "Fearless"),
+                       "pop rock" = c("Speak Now","Red"),
+                       "electropop" = c("1989","reputation","Lover"),
+                       "folk pop" = c("folklore","evermore"),
+                       "alt-pop" = "Midnights")) |> 
+  slice_sample(n = 6)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+
+eras_data |> 
+  mutate(Genre = fct_collapse(.f= Album,
+                       "country pop" = c("Taylor Swift", "Fearless"),
+                       "pop rock" = c("Speak Now","Red"),
+                       "electropop" = c("1989","reputation","Lover"),
+                       "folk pop" = c("folklore","evermore"),
+                       "alt-pop" = "Midnights")) |> 
+  slice_sample(n = 6) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "350px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+
+
+## Re-leveling a Factor --`fct_relevel`
+
+Change the **order** of the levels of an existing factor.
+
+::: panel-tabset
+### Original
+
+```{r}
+#| echo: true
+eras_data |>
+  pull(Album) |> 
+  levels()
+```
+
+### Ordered by Copies Sold
+
+```{r}
+#| echo: true
+eras_data |> 
+  mutate(Album = fct_relevel(.f = Album, 
+                             c("Fearless","1989","Taylor Swift",
+                               "Speak Now","Red","Midnights","reputation",
+                               "folklore","Lover","evermore"))) |>
+  pull(Album) |>
+  levels()
+```
+
+Unspecified levels remain in the same order at the **end**.
+:::
+
+## Re-ordering Factors in `ggplot2`
+
+::: panel-tabset
+### Original
+
+The bars follow the default factor levels.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "2"
+full_eras |> 
+  mutate(Album = fct(Album)) |> 
+  ggplot() +
+  geom_bar(aes(y = Album), fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  mutate(Album = fct(Album)) |> 
+  ggplot() +
+  geom_bar(aes(y = Album), fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Specify Levels
+
+We can order factor levels to order the bar plot.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "2-6"
+full_eras |> 
+  mutate(Album = fct(Album,
+                     levels = c("Fearless","Speak Now","Red",
+                                "1989","Reputation","Lover",
+                                "Folklore","Evermore",
+                                "Midnights"))) |> 
+  ggplot() +
+  geom_bar(aes(y = Album), fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  mutate(Album = fct(Album,
+                     levels = c("Fearless","Speak Now","Red",
+                                "1989","Reputation","Lover",
+                                "Folklore","Evermore",
+                                "Midnights"))) |> 
+  ggplot() +
+  geom_bar(aes(y = Album), fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+:::
+
+
+## Re-ordering Factors in `ggplot2`
+
+::: panel-tabset
+### Original
+
+The bars follow the default factor levels.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "2"
+full_eras |> 
+  mutate(Album = fct(Album)) |> 
+  ggplot() +
+  geom_bar(aes(y = Album), fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  mutate(Album = fct(Album)) |> 
+  ggplot() +
+  geom_bar(aes(y = Album), fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Reorder by Value
+
+We can order factor levels to order the bar plot by the count using `fct-infreq()`
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "3"
+full_eras |> 
+  ggplot() +
+  geom_bar(aes(y = fct_infreq(Album)), 
+           fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  ggplot() +
+  geom_bar(aes(y = fct_infreq(Album)), 
+           fill = "#A5C9A5") +
+  theme_minimal() +
+  labs(x = "Number of Songs",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+:::
+
+
+## Re-ordering Factors in `ggplot2`
+
+```{r}
+full_eras <- full_eras |> 
+  mutate(Album = fct(Album,
+                     levels = c("Fearless","Speak Now","Red",
+                                "1989","Reputation","Lover",
+                                "Folklore","Evermore",
+                                "Midnights")))
+```
+
+::: panel-tabset
+### Original
+
+The ridge plots follow the order of the factor levels.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "3"
+full_eras |> 
+  ggplot(aes(x = Length, 
+             y = Album, 
+             fill = Album)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  labs(x = "Song Length (mins)",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+library(ggridges)
+full_eras |> 
+  ggplot(aes(x = Length, 
+             y = Album, 
+             fill = Album)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  labs(x = "Song Length (mins)",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### `fct_reorder()`
+
+Inside `ggplot()`, we can order factor levels by a summary value.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "3-5"
+full_eras |> 
+  ggplot(aes(x = Length, 
+             y = fct_reorder(.f = Album,
+                             .x = Length,
+                             .fun = mean), 
+             fill = Album)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  labs(x = "Song Length (mins)",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  ggplot(aes(x = Length, 
+             y = fct_reorder(.f = Album,
+                             .x = Length,
+                             .fun = mean), 
+             fill = Album)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  labs(x = "Song Length (mins)",
+       y = "",
+       subtitle = "Album",
+       title = "Songs Played on the Eras Tour")
+```
+:::
+
+## Re-ordering Factors in `ggplot2`
+
+::: panel-tabset
+### Original
+
+```{r}
+full_eras <- full_eras |> 
+  mutate(Single = if_else(Single == "Y", 1, 0))
+```
+
+The legend follows the order of the factor levels.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "7"
+full_eras |> 
+  filter(!Album %in% c("1989","Fearless")) |> 
+  group_by(Album, Single) |> 
+  summarise(avg_len = mean(Length)) |> 
+  ggplot(aes(x = Single, 
+             y = avg_len, 
+             color = Album)) +
+  geom_point(size = 1.5) +
+  geom_line() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1),
+                     labels = c("No","Yes")) +
+  labs(y = "",
+       subtitle = "Average Song Length",
+       color = "Album")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  filter(!Album %in% c("1989","Fearless")) |> 
+  group_by(Album, Single) |> 
+  summarise(avg_len = mean(Length)) |> 
+  ggplot(aes(x = Single, 
+             y = avg_len, 
+             color = Album)) +
+  geom_point(size = 1.5) +
+  geom_line() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1),
+                     labels = c("No","Yes")) +
+  labs(y = "",
+       subtitle = "Average Song Length",
+       color = "Album")
+```
+
+### `fct_reorder2()`
+
+Inside `ggplot()`, we can order factor levels by the $y$ values associated with the largest $x$ values.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: 7-9
+full_eras |> 
+  filter(!Album %in% c("1989","Fearless")) |> 
+  group_by(Album, Single) |> 
+  summarise(avg_len = mean(Length)) |> 
+  ggplot(aes(x = Single, 
+             y = avg_len, 
+             color = fct_reorder2(.f = Album,
+                                  .x = Single,
+                                  .y = avg_len))) +
+  geom_point(size = 1.5) +
+  geom_line() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1),
+                     labels = c("No","Yes")) +
+  labs(y = "",
+       subtitle = "Average Song Length",
+       color = "Album")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+full_eras |> 
+  filter(!Album %in% c("1989","Fearless")) |> 
+  group_by(Album, Single) |> 
+  summarise(avg_len = mean(Length)) |> 
+  ggplot(aes(x = Single, 
+             y = avg_len, 
+             color = fct_reorder2(.f = Album,
+                                  .x = Single,
+                                  .y = avg_len))) +
+  geom_point(size = 1.5) +
+  geom_line() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1),
+                     labels = c("No","Yes")) +
+  labs(y = "",
+       subtitle = "Average Song Length",
+       color = "Album")
+```
+:::
+
+## Why Mess with Factors?
+
+::: callout-note
+# Discussion
+
+What are some of the benefits to re-ordering or re-leveling factors variables? 
+:::
+
+
+# `janitor` Package
+
+## Variable Names in R
+
+```{r}
+#| include: false
+library(readxl)
+library(tidyverse)
+military <- read_xlsx("../../practice_activities/_data/SIPRI-Milex-data-1949-2024.xlsx", 
+                sheet = "Share of Govt. spending", 
+                skip  = 7)
+
+military_clean <- military |> 
+  select(-Notes, -`Reporting year`) |> 
+  filter(!is.na(Country)) |> 
+   mutate(across(.cols = !Country, 
+                .fns  = ~na_if(.x, "...")),
+         across(.cols = !Country,
+                .fns  = ~na_if(.x, "xxx")))
+```
+
+Data from external sources likely has variable names not ideally formatted for R.
+
+Names may...
+
+-   contain spaces.
+-   start with numbers.
+-   start with a mix of capital and lower case letters.
+
+. . .
+
+```{r}
+#| eval: true
+#| echo: true
+names(military)[1:12]
+```
+
+## Messy Variable Names are a Pain
+
+- You should have noticed this in Practice Activity 4 working with the SIPRI data
+
+- You have to use back tick marks around variables that start with numbers or have spaces:
+
+```{r}
+#| eval: false
+#| echo: true
+military |> 
+  select(`Reporting year`,
+          `1988.0`)
+```
+
+- I personally find capitilization in variable names is *very* annoying and slows me down
+
+##  [`janitor`](https://sfirke.github.io/janitor/) to the rescue!
+
+
+
+![Mr. Johnson from Abbot Elementary (https://giphy.com/abcnetwork)](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMG9jZTB4bHQ3ajduZ280ZDluaXJzNWh2MDU2eXRmbW1vdWxqN3Q0MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UJYOL2u1j55B5xnouh/giphy.gif)
+
+
+
+## Clean Variable Names with [`janitor`](https://sfirke.github.io/janitor/)
+
+The `janitor` package converts all variable names in a dataset to *snake_case*.
+
+:::{.incremental}
+Names will...
+
+-   start with a lower case letter.
+-   have spaces and special characters filled in with `_`.
+
+```{r}
+#| eval: true
+#| echo: true
+#| code-line-numbers: "3-5"
+library(janitor)
+military_clean_names <- military |> 
+  clean_names()
+
+names(military_clean_names)[1:12]
+```
+:::
+
+
+# Lifecycle Stages
+
+## `R` Is Always Evolving
+
+- Remember: `R` is open source so folks are always adding and updating packages and functions
+
+::: callout-note
+# Discussion
+
+What benefits and drawbacks of `R`'s ever-evolving nature have you noticed?
+:::
+
+. . .
+
+::: panel-tabset
+## the good 🥳
+
+- always (aiming) to get better!
+- responsive to user input
+- new functionality for new statistical methods
+    
+## the annoying
+- code may no longer run after an update 😭
+- need to learn new syntax
+- have to keep track of it all 🫠
+
+:::
+
+## Lifceycle Stages
+
+As packages get updated, the functions and function arguments included in those packages will change.
+
+-   The accepted syntax for a function may change.
+-   A function/functionality may disappear.
+
+![[Learn more about lifecycle stages](https://lifecycle.r-lib.org/articles/stages.html) of packages, functions, function arguments in R.](images/lifecycle.png)
+
+## Lifceycle Stages
+
+<center>![](images/lifecycle-facet1.png){width="70%"}</center>
+
+<center>![](images/lifecycle-facet2.png){width="70%"}</center>
+
+## Deprecated Functions
+
+A **deprecated** functionality has a better alternative available and is scheduled for removal.
+
+-   You get a warning telling you what to use instead.
+
+. . .
+
+```{r}
+#| warning: true
+#| message: true
+#| echo: true
+#| code-line-numbers: "2"
+military_clean |> 
+  filter(across(!Country, is.na)) |> 
+  slice_head(n = 3) |> 
+  select(1:8)
+```
+
+## Deprecated Functions
+
+You **should not** use deprecated functions!
+
+Instead, we use...
+
+```{r}
+#| echo: true
+#| code-line-numbers: "2"
+military_clean |>
+  filter(if_all(!Country, ~ is.na(.x))) |> 
+  slice_head(n = 3) |> 
+  select(1:8)
+```
+
+## Superceded Functions
+
+A **superseded** functionality has a better alternative, but is not going away.
+
+-   This is a softer alternative to deprecation.
+-   A superseded function will not give a warning (since there’s no risk if you keep using it), but the documentation will give you a recommendation.
+
+## Lab 4: Childcare Costs in California
+
+## To do...
+
+-   **Lab 4: Childcare Costs in California**
+    -   Due Saturday (2/1) at 11:59pm
+-   **Read Chapter 5: Strings + Dates**
+    -   **Check-in 5.1 - 5.2** due Monday (2/3) at 10:00am

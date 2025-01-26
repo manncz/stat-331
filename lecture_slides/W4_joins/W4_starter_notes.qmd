@@ -68,6 +68,20 @@ load(file = "data/imdb_data.Rdata")
 
 
 
+On Wednesday will also look at joining datasets created from the Lab 2 Rodent data. **Note that you will need to change the file path to be appropriate for your directory strucure!**
+
+```{r, rodent-data}
+rodent <- read_csv("../../lab_assignments/lab2/surveys.csv")
+species <- rodent |> 
+  select(genus:taxa, species_id) |> 
+  distinct()
+
+measurements <- rodent |> 
+  select(genus, species, sex:weight) |> 
+  rename(genus_name = genus)
+```
+
+
 ## Data Pivots
 
 Example data includes the `cereal` dataset from the `liver` package (which we saw last week)...
