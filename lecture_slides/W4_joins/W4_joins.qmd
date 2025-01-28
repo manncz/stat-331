@@ -221,7 +221,7 @@ We can **combine** (join) data tables based on their relations.
 
 Add *variables* from a new dataframe to observations in an existing dataframe.
 
-`full_join()`, `left_join()`, `right_join()`, `inner_join()`, `outer_join()`
+`full_join()`, `left_join()`, `right_join()`, `inner_join()`
 :::
 
 ::: column
@@ -1171,6 +1171,43 @@ Today we will...
 
 ## Notes on Lab 3
 
+::: {.incremental}
+- Only include output that (exactly) answers a specific question
+    + If you find yourself outputting a datatable with more than 20 rows, think again!
+- Be mindful of "environment junk"
+- Please do look at the solutions for statistical interpretations
+- We may leave comments on your assignments even if you get full credit
+:::
+
+## Lab 3 Question 11
+
+<font size = 6>
+**Which instructor(s) with either a doctorate or professor degree had the highest and lowest average percent of students responding to the evaluation across all their courses? Include how many years the professor had worked (seniority) and their sex in your output**
+</font>
+
+. . .
+
+The trick: `group_by()` `instructor_id`, `seniority`, and `sex`
+
+
+```{r}
+#| eval: false
+#| echo: true
+
+teacher_evals_clean |> 
+  filter(academic_degree %in% c("dr", "prof")) |> 
+  group_by(teacher_id, seniority, sex) |> 
+  summarize(avg_response = mean(resp_share)) |> 
+  ungroup() |> 
+  slice_max(order_by = avg_response) |> 
+  kable()
+```
+
+## Review of `across()`
+
+- we are struggling a bit with using `across()` (I agree it's a weird one!)
+
+
 
 # Extensions to Relational Data
 
@@ -1912,7 +1949,7 @@ full_eras |>
 
 ### Reorder by Value
 
-We can order factor levels to order the bar plot by the count using `fct-infreq()`
+We can order factor levels to order the bar plot by the count using `fct_infreq()`
 
 ```{r}
 #| echo: true
