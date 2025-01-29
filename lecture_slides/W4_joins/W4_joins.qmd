@@ -1175,9 +1175,10 @@ Today we will...
 - Only include output that (exactly) answers a specific question
     + If you find yourself outputting a datatable with more than 20 rows, think again!
 - Be mindful of "environment junk"
-- Please do look at the solutions for efficient code and statistical interpretations
-- We may leave comments on your assignments even if you get full credit
+- If we have cleaned up a dataset, you can assume that will be used for the remainder of the lab, unless otherwise specified
+- Please **look at the solutions** for efficient code and statistical interpretations
 :::
+
 
 ## Where is my file?
 
@@ -1238,6 +1239,8 @@ teacher_evals_clean |>
   slice_max(order_by = avg_response) |> 
   kable()
 ```
+
+- If you find yourself using `mutate()` and then `distinct()`, you should probably be using `summarize()`
 
 ## Review of `across()`
 
