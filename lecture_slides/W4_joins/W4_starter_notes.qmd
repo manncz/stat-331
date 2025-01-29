@@ -91,6 +91,19 @@ library(liver)
 data(cereal)
 ```
 
+```{r}
+mean_protein <- cereal |> 
+  group_by(manuf, shelf) |> 
+  summarize(mean_protein = mean(protein))
+
+
+mean_protein |> 
+  pivot_wider(id_cols = manuf,
+              names_from = shelf,
+              values_from = mean_protein)
+```
+
+
 ... and daily rainfall observed in SLO in January 2023. 
 [Data source](cesanluisobispo.ucanr.edu)
 
