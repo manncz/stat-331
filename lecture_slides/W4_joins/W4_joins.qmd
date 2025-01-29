@@ -1175,8 +1175,44 @@ Today we will...
 - Only include output that (exactly) answers a specific question
     + If you find yourself outputting a datatable with more than 20 rows, think again!
 - Be mindful of "environment junk"
-- Please do look at the solutions for statistical interpretations
+- Please do look at the solutions for efficient code and statistical interpretations
 - We may leave comments on your assignments even if you get full credit
+:::
+
+## Where is my file?
+
+- Remember: I will smash your computer if you:
+    1. Set a working directory in a Quarto file `setwd()` OR
+    2. Hard code a file path that would **only work on your computer**
+
+. . .    
+
+- USE RELATIVE FILE PATHS I BEG OF YOU
+
+## Where is my file?
+
+:::panel-tabset
+
+## Example Directory
+![](images/relative-file-paths.png)
+
+## Example Code
+
+If I was working in "monster.qmd" I would use the following markdown to embed the "pizza_dough.jpeg" image:
+
+`![](../images/pizza_dough.jpeg)`
+
+<br>
+
+and the following code to read in the "chocolate-chip.xlsx" and "rugelach.csv" files:
+
+```{r}
+#| eval: false
+#| echo: true
+
+read_csv("rugelach.csv")
+read_excel("data/chocolate-chip.xlsx")
+```
 :::
 
 ## Lab 3 Question 11
