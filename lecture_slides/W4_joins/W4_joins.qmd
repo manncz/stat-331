@@ -1182,9 +1182,9 @@ Today we will...
 
 ## Where is my file?
 
-- Remember: I will smash your computer if you:
+- Remember: I will smash 💥 your computer if you:
     1. Set a working directory in a Quarto file `setwd()` OR
-    2. Hard code a file path that would **only work on your computer**
+    2. Use an aboslute file path that would **only work on your computer**
 
 . . .    
 
