@@ -1,0 +1,64 @@
+---
+title: "Stat 331/531 Midterm Data Documentation"
+format: 
+  html:
+    self-contained: true
+    # code-tools: true
+    toc: true
+  # pdf: 
+  #   self-contained: true
+  #   # toc: true
+  #   number-sections: false
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+
+## US Minimum Wage by State from 1968 to 2020
+
+This dataset (`us-minimum-wage-data.csv`) was compiled by Joe Lisle and slightly edited for this exam. You can find more information [here](https://github.com/Lislejoem/Minimum-Wage-by-State-1968-to-2020).
+
+Each row contains a couple of different measurements of a state's minimum wage for a certain year. The data include the 50 U.S. states, plus Washington D.C., Guam, and Puerto Rico.
+
+
+### Variable descriptions:
+- `Effective.Date`: The date that the minimum wage values are from.
+- `State`: The state or territory of the data.
+- `State.Minimum.Wage`: The actual State's minimum wage on January 1 of Year.
+- `State.Minimum.Wage.2020.Dollars`: The `State.Minimum.Wage` in 2020 dollars.
+- `Federal.Minimum.Wage`: The federal minimum wage on January 1 of Year.
+- `Federal.Minimum.Wage.2020.Dollars`: The `Federal.Minimum.Wage` in 2020 dollars.
+- `Effective.Minimum.Wage`: The minimum wage that is enforced in State on January 1 of Year. Because the federal minimum wage takes effect if the State's minimum wage is lower than the federal minimum wage, this is the higher of the two.
+- `Effective.Minimum.Wage.2020.Dollars`: The `Effective.Minimum.Wage` in 2020 dollars.
+- `CPI.Average`: The average value of the Consumer Price Index in Year. When I pulled the data from the Bureau of Labor Statistics, I selected the dataset with "all items in U.S. city average, all urban consumers, not seasonally adjusted".
+- `Department.Of.Labor.Uncleaned.Data`: The unclean, scraped value from the Department of Labor's website.
+- `Department.Of.Labor.Cleaned.Low.Value`: The State's lowest enforced minimum wage on January 1 of Year. If there is only one minimum wage, this and the value for `Department.Of.Labor.Cleaned.High.Value` are identical. (Some states enforce different minimum wage laws depending on the size of the business. In states where this is the case, generally, smaller businesses have slightly lower minimum wage requirements.)
+- `Department.Of.Labor.Cleaned.Low.Value.2020.Dollars`: The `Department.Of.Labor.Cleaned.Low.Value` in 2020 dollars.
+- `Department.Of.Labor.Cleaned.High.Value`: The State's higher enforced minimum wage on January 1 of Year. If there is only one minimum wage, this and the value for `Department.Of.Labor.Cleaned.Low.Value` are identical.
+- `Department.Of.Labor.Cleaned.High.Value.2020.Dollars`: The `Department.Of.Labor.Cleaned.High.Value `in 2020 dollars.
+- `Footnote`: The footnote provided on the Department of Labor's [website](https://www.dol.gov/whd/state/stateMinWageHis.htm). See [the original documentation](https://github.com/Lislejoem/Minimum-Wage-by-State-1968-to-2020#data-footnotes) for more information.
+
+
+## US Presidential Election Data
+
+This dataset (`us-party-data.csv`) comes from the [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/42MVDX). 
+
+Each row of the data contains presidential voting information for US states from 1976 to 2020. The 50 US states are included (excludes Washington D.C. and US territories).
+
+The intention of this data is to give a proxy for the political leaning (simplified into political parties) for each state and year.
+
+### Variable descriptions:
+
+- `year`: a given year
+- `state`: name of a state
+- `pres_elect`: the party of the presidential candidate who received the largest proportion of the popular vote, in that state, for the *most recent* presidential election$^{1}$ as well as the proportion of the popular vote that was recieved.$^{2}$ The variable takes the form "PARTY (XX.XX%)".
+
+### Notes
+
+1. For example, for the years 1977, 1978, and 1979, there was no presidential election so `pres_elect` take the value of the data for the presidential election of 1976 in that state.
+2. The percentage of the popular vote recieved by a certain candidate can be less than 50\%, even if they recieved the highest percentage of the popular vote in a certain state and year.
+3. Citation: MIT Election Data and Science Lab, 2017, "U.S. President 1976–2020", https://doi.org/10.7910/DVN/42MVDX, Harvard Dataverse, V8, UNF:6:F0opd1IRbeYI9QyVfzglUw== [fileUNF]
