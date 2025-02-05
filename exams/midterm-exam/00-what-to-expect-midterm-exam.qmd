@@ -1,0 +1,145 @@
+---
+title: "What to Expect"
+subtitle: "Stat 331/531 Midterm Exam"
+format: 
+  html:
+    self-contained: true
+    code-tools: true
+    toc: true
+    number-sections: true
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+#| include: false
+library(tidyverse)
+library(lubridate)
+```
+
+***Disclaimer: Points could be adjusted as I finalize my rubric, but I am thinking this general weighting across the categories.***
+
+## Exam Details {-}
+
++ The exam is worth a total of 100 points and consists of 3 sections: General Questions, Short Answer, and Open-Ended Analysis.
++ I will bring paper copies of the exam questions 
++ You will have one hour and 50 minutes to complete sections 1 (General Questions) and 2 (Short Answer) of the exam.
++ Section 3 (Open-ended Analysis) will be due 48 hours after your exam time ends.
+  + For the 12:10 section: due Friday 2/17 at 2:00pm.
+  + For the 2:10 section: due Friday 2/17 at 4:00pm.
++ A `.qmd` starter file for the short answer will be unlocked at the start of each sections class.
++ You will be creating your own `.qmd` file for the open-ended analysis. You may bring one already created on your computer.
+
+::: callout-caution
+While this is an open resource exam, you will likely get caught running out of time if you have to look everything up. Know what functions you might need to approach the problem and where to find documentation for implementing these functions.
+:::
+
+## Policies {-}
+
++ You may use: any online resources, including anything posted on Canvas, in the text, or in your past assignments.
++ You may **NOT** contact anyone, inside or outside this class, during the course of the exam.  This includes email, chat/messenger services, and posting on online forums and message boards.
++ You may **NOT** use exam materials from previous years.
++ Violations of academic honesty include accessing and using any illegal materials, and giving or receiving help on this exam including looking at other student's exams, allowing other students to look at your own exam, and/or revealing any information about this exam or future exams to someone who has not yet taken it.
++ Students who exhibit academic misconduct will be reported to the Office of Student Rights
+and Responsibilities; academic dishonesty may be punishable by a grade of F in this course.
++ You may **NOT** discuss the exam with any other students until after the exams have been returned to all students.
++ If you witness others exhibiting academic misconduct, you have a duty to report them to your professor.
+
+## Basic Instructions {-}
+
++ Please note that you will probably need to use the **data documentation** in order to successfully complete this exam.
++ The problems on this exam do not necessarily need to be completed sequentially, e.g., if you cannot accomplish problem 1, you may still be able to accomplish problem 2.
++ Some parts to problems may need to be completed sequentially.  If you cannot complete part (a), please outline code or your thought process for completing part (b).
++ All questions should be answered **using R code**.  Make sure your code prints out only the information that directly answers the question.  **Penalties will be given if your .html file has extra output beyond that which answers the question.**
++ If your code has errors that you cannot fix in time, you may also include in the comments explanations of your thought process, to potentially receive partial credit.
++ For parts two and three, submit both your `.qmd` and `.html` files on Canvas by the end of the allotted time. However, only your `.html` file will be graded - make sure the knitted output contains all your answers.
++ Late uploads will be automatically deducted by -5 points per minute!
+  
+## The Data {-}
+
+Your data sets for the exam, `us-minimum-wage-data.csv` and `us-party-data.csv` can be downloaded [here](data/us-minimum-wage-data.csv) and [here](data/us-party-data.csv) or from canvas.
+
+The `us-minimum-wage-data.csv` data set contains information about the minimum wage for each US state across years. The `us-party-data.csv` data set contains information about political leanings of US states across years.
+
+::: callout-tip
+# Data Documentation
+Documentation for the data can be found [here](https://manncz.github.io/stat-331/exams/midterm-exam/data/midterm-data-documentation.html) and on Canvas. I **highly** recommend that you look over the documentation and data before the exam.
+:::
+
+You may bring to the exam any pre-analysis you have done of this data.
+  
+## General Questions  [20 points] 
+
+First, you will complete a General Questions section **on paper** and **without your computer.**
+
+*You will submit this section to me __before__ you start the Short Answer section.*
+
+You will be asked a series of fill in the black or multiple choice questions about `R`, `RStudio`, and performing operations with the `tidyverse`, etc. The questions will be similar to the questions in Check-Ins.
+
+## Short Answer [35 points]
+
+Second, you will complete a Short Answer coding section **on your computer** in class.
+
+You will be given a `.qmd` template similar to lab assignments and asked a series of short questions about the minimum wage data set, such as "Which word was most and least familiar to participants under 20 years old?" Each of these questions should be answered using functions from the `tidyverse`.
+
+There will be at least one "sketch your game plan" question and at least one "create a plot" question.
+
+You will turn in your `.html` and `.qmd` files only your `.html` file will be graded. You will be graded on the correct output, as well as your code style and design.
+
+**Use of ChatGPT is not allowed for work on this section.** Your answers will be compared against what ChatGPT would provide.
+
+**Late uploads will automatically be deducted 5 points per minute!**
+
+## Open-Ended Analysis [45 points]
+
+You will create your own `.qmd` file for this part. Make sure you know how to do this! 
+
+
+::: callout-caution
+Make sure the following quarto options are included in your YAML.
+
+`self-contained: true`
+
+`echo: true`
+
+`code-tools: true`
+
+`code-fold: true`
+
+You may want to copy a YAML from a previous lab assignment.
+:::
+
+You will be asked one open-ended question about the minimum wage data set, such
+as "Make an argument about the price of avocados and housing prices". You will
+create a write-up of approximately 1-2 pages (including all plots, echoed code, and
+tables) that tells a clear story. Aim for approximately 300-500 words. Your write-up must include **at least** one plot and **at least** one table of summary statistics (which should be nicely formatted using `kable()`). 
+
+You will turn in your `.html` and `.qmd` files; only your `.html` file will be
+graded. 
+
+While you are given 48 hours, you should not need to spend more than a few hours on this part of the exam! I expect a nice report can be completed in 3 hours or less.
+
+::: callout-warning
+Make sure your output only answers the question asked (e.g. I don't want
+to scroll through 2 pages of `summary(data)` or 50 pages of the data set printed
+out).
+:::
+
+Code format and design **is** part of your grade. You should be using the
+`tidyverse` package and style guide to address the question, but you can use
+outside supporting code (e.g. indexing from base R is not prohibited, but you
+should use `ggplot2` to create your plot instead of base R `plot`).
+
+**Late uploads will automatically be deducted 5 points per minute!**
+
+::: callout-tip
+While this is not an English class, I will be looking for clear and concise
+communication. Make sure to frame your insight with a data description paragraph
+and explain your argument.
+
+See an [example of a good open-ended analysis](https://earobinson95.github.io/stat331-calpoly/lab-assignments/lab4/lab4-student-sample-Q7.html) from a previous STAT 331 student. Note that an appropriate submission for the exam woudld include more description of the data AND would output a nicely formatted table using `kable()`.
+:::
