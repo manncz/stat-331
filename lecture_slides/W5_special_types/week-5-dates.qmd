@@ -202,7 +202,7 @@ ca_childcare |>
 - Review the "What to Expect" document thoroughly as it includes
   + detailed expectations
   + the dataset you will be working with
-- Set yourself with a dedicated directory that has the data in it
+- Set yourself up with a dedicated directory that has the data in it
 - Make sure to bring to the exam:
   + something to write with (black/blue pen or pencils)
   + your laptop (& a charging chord)
@@ -213,6 +213,20 @@ ca_childcare |>
 
 ::: callout-caution
 While the coding tasks are open-resource, you will likely run out of time if you have to look everything up. Know what functions you might need and where to find documentation for implementing these functions.
+:::
+
+## Midterm Preparation Suggestions
+
+:::{.incremental}
+- Review course slides \& Check-Ins
+- Quiz each other on the uses of different functions
+- Try to re-do parts of the PAs or LAs from scratch
+- Start working with the data
+  - HAVE CODE SET UP THAT READS IN THE DATA
+  - Ask some questions about the data and try to answer them
+- Save example code for things you find tricky in a place you can find it
+- [**Get sleep and feed yourself!**]{style="color:green;"} 🛌🥞🥙🍛
+
 :::
 
 ## Project 
