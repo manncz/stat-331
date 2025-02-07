@@ -15,7 +15,7 @@ library(liver)
 data(cereal)
 ```
 
-## Monday, May 6
+## Monday, February 10
 
 Today we will...
 
