@@ -6,8 +6,8 @@
 
 # Large files
 
-
 libs/*
+
 
 
 # Non-sharable info
@@ -18,6 +18,8 @@ notes.md
 *_check.html
 *_old.qmd
 *_old.html
+*schedule.xlsx
 
 # making my life easier
 */_old/*
+*/W4_joins/images/*
