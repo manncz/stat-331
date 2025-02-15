@@ -60,7 +60,7 @@ Pay attention to the **time zone** that is assigned when the data are read in. H
 ```
 
 
-3. It is believed that the heist was committed within 5 weeks (35 days) of Thanksgiving 2022.
+3. It is believed that the heist was committed within 5 weeks (35 days) of Thanksgiving 2022 (before or after).
 
 ::: callout-note
 Pay attention to **time zones**!
