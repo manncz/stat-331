@@ -432,11 +432,9 @@ kableExtra::kable(caption = "Tentative schedule of class topics and important du
 ```
 
 ::: callout-tip
-## **Final Exam** Saturday March 15th time TBD
+## **Final Exam** Saturday March 15th 1:10 - 4:00 pm
 
-I am requesting a common final time on 3/15. If you have conflicts with the
-common final time, please communicate this to me as soon as possible and
-by the end of Week 7 at the latest.
+The final exam will take place Sat 3/15 from 1:10-4:00 pm in 42-0205E. If you have a conflict with the common final time, please communicate this to me as soon as possible and by the end of Week 8 at the latest.
 :::
 
 ## Assessments
@@ -473,7 +471,7 @@ efforts. Note that the Canvas Check-in quizzes can be submitted two two
 times and your highest score will be kept, so you should get close to
 100% on this part of the course!
 
--   Check-ins are (typically) due **Mondays at 10:00am**.
+-   Check-ins are (typically) due **Mondays at 12:00pm**.
 
 #### Practice Activities
 
@@ -486,7 +484,7 @@ Since these activities are intended to be your first attempt at new
 skills, *they are meant to be done with help from me and your peers*.
 Therefore, you will always be given some time in class to work on them.
 
--   Practice Activities are (typically) due **Wednesdays at 10:00am.**
+-   Practice Activities are (typically) due **Wednesdays at 12:00pm.**
 
 #### Lab Assignments
 
