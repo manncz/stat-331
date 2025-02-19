@@ -245,7 +245,7 @@ If you are struggling with the structure of your function, I would suggest readi
 # Code for Q12.
 ```
 
-**13. Write a function to calculate the condition index of a fish, given inputs of weight and length. Use your modified `fish` dataset**
+**13. Write a function to calculate the condition index of a fish, given inputs of weight and length. Show that it works on your modified `fish` dataset**
 
 ::: callout-warning
 
