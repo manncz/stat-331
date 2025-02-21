@@ -20,13 +20,16 @@ execute:
 library(tidyverse)
 ```
 
+[Download .qmd starter file](lab-8-iteration.qmd)
+
+
 For this week's lab, we will be revisiting questions from previous lab
 assignments, with the purpose of using functions from the `map()` family to 
 iterate over certain tasks. To do this, we will need to load in the data from 
 Lab 2, Lab 3, and Lab 7.
 
 Edit the code below to read in the appropriate datsets that you should have saved
-from teh previous labs!
+from the previous labs!
 
 ```{r}
 #| label: read-in-old-data
@@ -76,6 +79,14 @@ generating tables but I recommend either `kable()` function from the **knitr** p
 
 -   styling functions from the **kableExtra** package (e.g., `kable_styling()`, `kable_classic()`)
 -   add-on functions from the **gt** package (e.g., `cols_label()`, `tab_header()`, `fmt_percent()`)
+
+::: callout-warning
+
+Quarto doesn't play nice with some options for formatting HTML tables in other packages. 
+
+To make sure that your tables render as expected, we need to specify `html-table-processing: none` in the YAML header. You will notice that I already included that in this lab.
+:::
+
 
 
 ## Lab 2
@@ -148,6 +159,12 @@ There are two main ways (that I have thought of) to approach this efficiently:
 2. Using both `pivot_wider()` and `pivot_longer()`.
 
 It is easiest to start with creating a dataframe that has the `variable`, `level`, and `count` columns and then calculate `prop`, the proportion of professors that are in each group.
+
+Final tip (not required) - I used the following options in `kable_styling()` to output this table:
+```
+  kable_styling(full_width = F,
+                bootstrap_options = "striped")
+```                
 
 :::
 
