@@ -23,7 +23,7 @@ library(glue)
 
 [Download starter .qmd file](PA8.qmd)
 
-[Download xmax.csv data](_data/xmas.csv)
+[Download xmas.csv data](_data/xmas.csv)
 
 ## Introduction {-}
 
