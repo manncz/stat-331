@@ -78,7 +78,7 @@ xmas <- read.csv("xmas.csv")
 
 ##### Don't sweat the small stuff {-}
 
-+ There's a lot you can do to polish the way the song prints, but we're going to leave that to the lab assignment.
++ There's a lot you can do to polish the way the song prints, but we're going to leave that be.
 + At this point, don't get bogged down in details like how the song displays, or small grammar rules (like commas!). 
 :::
 
@@ -88,17 +88,8 @@ In the `xmas` dataset, the gifts are listed as singular. For example, on day 5, 
 
 ::: callout-tip
 
-*Hint 1:* The gifts on days six and nine have unusual pluralization (not just adding an "s"). You may assume that in any other dataset we might apply this function to, there will be **no** additional special cases beyond these two types.
-
-*Hint 2:* The following example may be useful to you:
-
-```{r, eval = TRUE}
-my_fruits <- c("banana","kiwi","strawberry","apple","blueberry","pear")
-
-my_fruits |> 
-  str_c("s", sep = "") |> 
-  str_replace("ys$", "ies")
-```
+# Hint 
+The gifts on days six and nine have unusual pluralization (not just adding an "s"). You may assume that in any other dataset we might apply this function to, there will be **no** additional special cases beyond these two types.
 
 :::
 
