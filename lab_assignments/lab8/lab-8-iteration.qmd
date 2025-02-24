@@ -1,5 +1,6 @@
 ---
 title: "Lab 8: Searching for Efficiency"
+author: "Your name"
 format: 
   html:
     code-tools: true
@@ -22,9 +23,10 @@ library(tidyverse)
 
 [Download .qmd starter file](lab-8-iteration.qmd)
 
+## The Data
 
-For this week's lab, we will be revisiting questions from previous lab
-assignments, with the purpose of using functions from the `map()` family to 
+For this week's lab, we will be **revisiting questions from previous lab assignments**, 
+with the purpose of using functions from the `map()` family to 
 iterate over certain tasks. To do this, we will need to load in the data from 
 Lab 2, Lab 3, and Lab 7.
 
