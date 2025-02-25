@@ -1,0 +1,474 @@
+---
+title: "Data Communication + Nice Tables"
+format: 
+  revealjs:
+    theme: [default, ../slide_custom.scss]
+    auto-stretch: false
+    html-table-processing: none
+editor: source
+embed-resources: true
+execute:
+  echo: true
+---
+
+```{r setup}
+#| include: false
+#| message: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(gt)
+
+fish <- read_csv("../../lab_assignments/lab7/BlackfootFish.csv")
+```
+
+## Wednesday, Feb 26
+
+Today we will...
+
++ Debugging Functions
+  + Ex: PA8
++ Communicating Findings from Statistical Computing
+  + Describing data
+  + Describing plots & tables
+  + Designing Plots
+  + Report-ready tables
++ Lab 8: Searching for Efficiency
+
+
+# Debugging Functions
+
+## A couple of strategies
+
+:::{.incremental}
+
+- Don't write a whole function at once (if it is complicated)!
+    - Write small parts and test each
+    - test often
+    
+- Set up intermediate tests
+
+- Print a lot
+
+- Just staring at your code *probably* won't help
+
+:::
+
+
+
+# Communicating Findings from Statistical Computing
+
+## Remember the Data Science Process
+
+```{r}
+#| out-width: "90%"
+#| fig-align: center
+#| echo: false
+knitr::include_graphics("images/data-science-workflow.png")
+```
+
+. . .
+
+Communicating about your analysis and findings is a key element of statistical computing.
+
+## Describing data
+
+- Data source(s)
+- Observational unit / level (e.g. county and year)
+- Overview of what is included (e.g. demographic incormation and weekly median childcare costs for each county and year)
+- Years or geographies included (e.g. 2008-2018, CA only)
+
+## Describing data cleaning
+
+- What does the audience need to know about any **choices / decisions** that you make while cleaning the data?
+  - how did you handle missing data?
+  - how did you define variables?
+  - did you drop any observations? How many and why?
+  
+. . .  
+  
+- This doesn't include
+  - discussing specific file, variable, or function names
+  - data cleaning that has no impact on *interpretating* the resulting analysis
+    - e.g. changing the type of a variable
+  
+  
+## Describing data cleaning
+
+Which is clearer to a general audience?:
+
+
+> In this analysis, we use data from the US Department of Labor which includes a variety of measurements of a state's minimum wage for US states and territories by year. We additionally include information from a dataset provided by the Harvard Dataverse on state party leanings by year. Our analysis includes the years 1976 - 2020 and the 50 US states. 
+
+> In this analysis, we use `inner_join()` to join `us-party-data.csv` and `us-minimum-wage-data.csv` by `year` and `state`.
+  
+
+## Describing Analyses
+
+- Be clear about variable definitions if ambiguous in any way!!
+  - E.g.: "party leaning" can mean so many different things
+- What is included in a summary?
+
+## Describing Analyses
+
+What does this table show?
+
+```{r}
+#| code-fold: true
+
+fish |> 
+  mutate(length_lev = case_when(length <= 150 ~ "short",
+                                length <= 300 ~ "medium",
+                                length <= 400 ~ "long",
+                                TRUE ~ "super long"
+                                ),
+         length_lev = fct_relevel(length_lev, 
+                                  c("short",
+                                    "medium",
+                                    "long",
+                                    "super long"))
+         ) |> 
+  group_by(section, length_lev) |> 
+  filter(year > 2000) |> 
+  summarize(n = n(), .groups = "drop") |> 
+  group_by(section) |> 
+  mutate(prop = n / sum(n)) |> 
+  select(-n) |> 
+  pivot_wider(names_from = section,
+              values_from = prop) |> 
+  kable(digits = c(0,2,2))
+```
+
+
+:::callout-warning
+## ??
+
+Who knows without a description of how the length column is defined or what the numeric values in the table actually are.
+
+:::
+
+## Plot Design
+
+Stepping back...
+
+- What do you want to be very easy to see from your plot?
+- What aesthetics will help make comparisons?
+- You may want to try a couple of different aesthetic choices to see which is clearer
+- A clear plot will often look "boring" to you!
+
+
+## Plot Design
+
+```{r}
+#| layout-ncol: 2
+#| code-fold: true
+
+sec.cols <- c("#fdb462", "#b3de69")
+trip.cols <- c("#fb8072", "#80b1d3")
+
+
+fish <- fish |> 
+  mutate(trip = str_c("Trip ", trip)) |> 
+  mutate(across(.cols = c(trip, section, species),
+                .fns = ~ as.factor(.x)))
+
+fish |> 
+  filter(if_any(.cols = everything(),
+                .fns = ~ is.na(.x))) |> 
+  ggplot(aes(x = year,
+             fill = trip)) +
+  geom_bar() +
+  facet_grid(~ section) +
+  scale_fill_manual(values = trip.cols) +
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       fill = "Trip Number")
+
+
+
+fish |> 
+  filter(if_any(.cols = everything(),
+                .fns = ~ is.na(.x))) |> 
+  ggplot(aes(x = year,
+             fill = trip)) +
+  geom_bar(position = "dodge") +
+  facet_grid(~ section) +
+  scale_fill_manual(values = trip.cols) +
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       fill = "Trip Number") +
+  theme(legend.position = "bottom")
+
+
+fish |> 
+  filter(if_any(.cols = everything(),
+                .fns = ~ is.na(.x))) |> 
+  ggplot(aes(x = year,
+             fill = section)) +
+  geom_bar() +
+  facet_grid(~ trip) +
+  scale_fill_manual(values =  sec.cols) +
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       fill = "Section")
+
+
+
+fish |> 
+  filter(if_any(.cols = everything(),
+                .fns = ~ is.na(.x))) |> 
+  ggplot(aes(x = year,
+             fill = section)) +
+  geom_bar(position = "dodge") +
+  facet_grid(~ trip) +
+  scale_fill_manual(values = sec.cols) +
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       fill = "Section") +
+  theme(legend.position = "bottom")
+```
+
+## Plot Design
+
+
+```{r}
+#| layout-ncol: 2
+#| code-fold: true
+
+fish_sum <- fish |> 
+  group_by(year, section, trip) |> 
+  summarize(n_miss = sum(is.na(weight))) 
+
+fish_sum |> 
+  ggplot(aes(x = year,
+             y = n_miss,
+             color = trip)) +
+  geom_line(linewidth = 1) +
+  geom_point() +
+  facet_grid(cols = vars(section)) +
+  scale_color_manual(values = trip.cols) + 
+  theme_bw() +  
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       color = "Trip") 
+
+
+fish_sum |> 
+  ggplot(aes(x = year,
+             y = n_miss,
+             color = section)) +
+  geom_line(linewidth = 1) +
+  geom_point() +
+  facet_grid(cols = vars(trip)) +
+  scale_color_manual(values = sec.cols) + 
+  theme_bw() +  
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       color = "Section") 
+
+
+fish_sum |> 
+  ggplot(aes(x = year,
+             y = n_miss)) +
+  geom_line(linewidth = 1) +
+  geom_point() +
+  facet_grid(cols = vars(trip),
+             rows = vars(section)) +
+  theme_bw() +  
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year") 
+
+
+fish_sum |> 
+  ggplot(aes(x = year,
+             y = n_miss,
+             color = section,
+             linetype = trip)) +
+  geom_line(linewidth = 1) +
+  geom_point() +
+  scale_color_manual(values = sec.cols) + 
+  scale_linetype_manual(values = c(2, 1)) +
+  theme_bw() +  
+  labs(y = "",
+       subtitle = "Number of Missing Weight Values",
+       x = "Year",
+       color = "Section",
+       linetype = "Trip") 
+```
+
+## Table Design
+
+- What do you want to communicate / emphasize?
+- What should the rows and columns be?
+  - What are clear labels?
+- Is there any grouping of rows and/or columns that would be helpful?
+
+
+## Report Ready Tables in `R`
+
+- We have just shown data tables directly, midly formatting for html using `kable()`
+
+. . .
+
+- We can make report-ready tables using `kableExtra` or `gt`!
+
+
+
+:::: {.columns}
+::: {.column width="50%"}
+![](images/kable.png){width=70%}
+:::
+::: {.column width="50%"}
+![](images/gt.svg){width=70%}
+:::
+:::
+
+
+## Yay reproducibility!
+
+- Formatting tables in code makes them completely reproducible
+- No need to update results manually in a table
+- No room for copy-paste error
+- Can integrate directly into a report / paper
+
+## Yay reproducibility!
+
+
+```{r}
+#| fig-align: center
+#| fig-cap: "A table for one of my papers, produced directly in R"
+#| echo: false
+#| out-width: 80%
+knitr::include_graphics("images/report_table.png")
+```
+
+
+
+## Nice tables with `kable()` and `kableExtra` functions
+
+
+::: {.columns}
+
+::: {.column width="70%"}
+- Great for tables that don't need to be *super* fancy but you want to clean up a bit
+- Default options look nice in html
+- Nice options for changing rows / columns individually
+- Get started with these resources ([1](https://haozhu233.github.io/kableExtra/awesome_table_in_html.html#Overview)) ([2](https://bookdown.org/yihui/rmarkdown-cookbook/kable.html))
+:::
+
+::: {.column width="30%"}
+![](images/kable.png){width=70%,fig-align="center"}
+:::
+:::
+
+
+
+## Nice tables with the `gt` package
+
+::: {.columns}
+
+::: {.column width="70%"}
+- Fancy, report tables
+- Lots of formatting options for common variable types
+- Syntax less error-prone
+- Create labels directly with markdown!
+- [Get started](https://gt.rstudio.com/articles/gt.html)
+- [Full index of functions](https://gt.rstudio.com/reference/index.html)
+:::
+
+::: {.column width="30%"}
+![](images/gt.svg){width=70%,fig-align="center"}
+:::
+:::
+
+
+## Table Design Example
+
+"Raw" Table:
+
+```{r}
+#| code-fold: true
+
+tab_dat <- fish |> 
+  group_by(species) |> 
+  summarize(avg_weight = mean(weight, na.rm = T),
+            sd_weight = sd(weight, na.rm = T),
+            n = n()) 
+
+tab_dat |> 
+  kable()
+```
+## Table Design Example - `kableExtra`
+
+```{r}
+#| code-fold: true
+
+tab_dat |> 
+  arrange(desc(avg_weight)) |> 
+  kable(digits = c(0, 1, 1, 0),
+        col.names = c("Species", "Mean", "SD", "N. Samples"),
+        caption = "Summaries of fish weights by species across all sampling years (between 1989 - 2006) trips and sites.") |>
+  kable_classic(full_width = F,
+                bootstrap_options = "striped") |> 
+  add_header_above(c(" " = 1, "Weight (g)" = 2," " = 1),
+                   bold = TRUE) |> 
+  row_spec(row = 0, bold = T, align = "c")
+```
+## Table Design Example - `gt`
+
+
+```{r}
+#| code-fold: true
+
+tab_dat |> 
+  arrange(desc(avg_weight)) |> 
+  gt() |> 
+  tab_options(table.font.size = 32) |> 
+  tab_header(
+    title = "Summary of Fish Weights by Species",
+    subtitle = "all sampling years, trips, and sites"
+  ) |> 
+  tab_spanner(label = md("**Weight (g)**"), 
+              columns = c(avg_weight, sd_weight)) |> 
+  tab_style(style = cell_text(align = "center"),
+    locations = cells_column_labels()) |> 
+  cols_align(align = "left",
+             columns = species) |> 
+  fmt_number(columns = c(avg_weight, sd_weight),
+             decimals = 1) |> 
+  fmt_number(columns = n,
+             decimals = 0) |> 
+  cols_label(
+    "avg_weight" = md("**Mean**"),
+    "sd_weight" = md("**SD**"),
+    "n" = md("**N. Samples**"),
+    "species" = md("**Species**")
+  )
+```
+
+## Lab 8: Searching for Efficiency
+
+Revisit previous lab problems through the lens of efficiency
+
+- Use functions from `map()` instead of `across()`
+- Reduce separate pipelines into a single pipeline
+- Make nice tables!
+
+
+## To do...
+  
+  
++ **Project Proposal + Data**
+  + Due Friday 2/28 at 11:59pm.
+  
++ **Lab 8: Searching for Efficiency**
+  + Due Sat 3/1 at 11:59pm.
+  
+  

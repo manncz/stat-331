@@ -37,6 +37,14 @@ You must complete the *objectives* and write up the *written components* outline
   + Due on Canvas by 11:59pm on Friday, 2/28
   + "Group" Canvas assignment, so only one person needs to submit it in your group
 
+## Project + GitHub
+
+- I missed this in the Group Contract: "[max +12 FP for collaboration using GitHub]"
+- My policy: 
+  - you have the opportunity to get up to 5 points back on the project if you collaborate with GitHub
+  - include the link to your repo in every submission
+  - everyone needs to commit to the repo
+  
 
 # Performing Repeated Tasks
 
