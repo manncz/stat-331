@@ -142,7 +142,7 @@ ggplot(my_samples, aes(x)) +
 :::: columns
 ::: column
 + Somewhat **skewed**, and only allows values **above zero**.
-+ Used in testing **count data**.
++ Commonly used in statistical testing.
 :::
 ::: column
 ```{r}
@@ -164,7 +164,8 @@ ggplot(my_samples, aes(x)) +
 
 :::: columns
 ::: column
-+ Appears when you have **two possible outcomes**, and you are **counting** how many times each outcome occurred.
++ There are **two possible outcomes**, and you are **counting** how many times one of the outcomes occured out of a fixed number of trials.
++ Takes discrete values from 0 to the number of trials.
 :::
 ::: column
 ```{r}
@@ -225,20 +226,35 @@ rchisq(n = 3, df = 11)
 
 `p` is for **probability**.
 
-+ Compute the chances of observing a value less than `x`.
++ Compute the chances of observing a value **less than** `x`: $P(X < x)$
 + We use this for calculating **p-values**.
 
 :::: {.columns}
-::: {.column width=45%}
+::: {.column width=50%}
 ```{r}
-pnorm(q = 1.5)
 pnorm(q = 70, mean = 67, sd = 3)
-```
-:::
-::: {.column width=55%}
-```{r}
+
 1 - pnorm(q = 70, mean = 67, sd = 3)
 pnorm(q = 70, mean = 67, sd = 3, lower.tail = FALSE)
+```
+:::
+::: {.column width=50%}
+```{r}
+#| echo: false
+
+rnorm(10000, mean = 67, sd = 3) |> 
+  enframe() |> 
+  ggplot(aes(x = value)) +
+  stat_function(fun = ~dnorm(.x, mean = 67, sd = 3), 
+                col = "cornflowerblue", lwd = 1) +
+  scale_x_continuous(breaks = c(55, 58, 61, 64, 67, 70, 73, 76, 79)) +
+  geom_vline(xintercept = 70) +
+  labs(y = "",
+       x = "",
+       title = "Density for N(67, 3)") +
+  theme_classic() +
+  theme(title = element_text(size = 16),
+        axis.text.x = element_text(size = 16))
 ```
 :::
 ::::
@@ -381,25 +397,20 @@ data |>
 
 :::
 
-# Simulating Data
+# Simulation - Sampling From Probability Distributions
 
+## Generating Simulated Data - The Idea
 
-## Simulate a Dataset
+- We can generate fake ("synthetic") data based on the assumption that a variable follows a certain distribution.
 
-::: panel-tabset
-
-### The Idea
-
-We can generate fake data based on the assumption that a variable follows a certain distribution.
-
-+ We randomly sample observations from the distribution.
+- We randomly sample observations from the distribution.
 
 ```{r}
 age <- runif(1000, min = 15, max = 75)
 ```
 
 
-### `set.seed()`
+## Reproducible samples: `set.seed()`
 
 Since there is randomness involved, we will get a different result each time we run the code.
 
@@ -416,24 +427,41 @@ runif(3, min = 15, max = 75)
 :::
 ::::
 
-To make a **reproducible** random sample, we first **set the seed**:
+<br>
+
+. . .
+
+To generate a **reproducible** random sample, we first **set the seed**:
 
 :::: {.columns}
 ::: {.column width=50%}
 ```{r}
 set.seed(94301)
+
 runif(3, min = 15, max = 75)
 ```
 :::
 ::: {.column width=50%}
 ```{r}
 set.seed(94301)
+
 runif(3, min = 15, max = 75)
 ```
 :::
 ::::
 
-### `tibble`
+. . .
+
+:::callout-tip
+# Whenever you are doing an analysis that involves a random element, you should set the seed!
+:::
+
+
+## Simulate a Dataset
+
+:::panel-tabset
+
+##  `tibble`
 ```{r}
 #| code-line-numbers: "3-5" 
 set.seed(435)
@@ -442,10 +470,22 @@ fake_data <- tibble(names   = charlatan::ch_name(1000),
         age     = runif(1000, min = 15, max = 75),
         measure = rbinom(1000, size = 1, prob = 0.6)) |> 
   mutate(supports_measure_A = ifelse(measure == 1, "yes", "no"))
-head(fake_data)
 ```
 
-### visualize
+```{r}
+#| eval: false
+head(fake_data) 
+```
+
+```{r}
+#| echo: false
+head(fake_data) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+
+## visualize
 
 Check to see the ages look uniformly distributed.
 
@@ -469,59 +509,193 @@ fake_data |>
 :::
 
 
-## Simulate Multiple Datasets
 
-::: panel-tabset
 
-### Function
 
-Write a function to simulate height data from a population with some mean and SD height.
+## Simulate Multiple Datasets - Step 1
 
+::: {.small}
+Write a function to simulate height data from a population with some mean and SD
+height. 
+
+The user should be able to input:
+
+- how many observations to simulate
+- the mean and standard deviation of the Normal distribution to use when 
+simulating
+:::
+
+
+
+::: columns
+::: {.column width="60%"}
+::: {.fragment}
+::: {.small}
 ```{r}
-ht_func <- function(n = 200, avg, std){
+#| code-line-numbers: false
+
+sim_ht <- function(n = 200, avg, std){
   tibble(person = 1:n,
          ht = rnorm(n = n, mean = avg, sd = std))
 }
-
-ht_func(n = 5, avg = 66, std = 3)
 ```
+:::
+:::
+:::
 
-### Parameters
+::: {.column width="5%"}
+:::
 
-Create a mean and SD height for each population.
+::: {.column width="35%"}
+::: {.fragment}
+::: {.small}
+```{r}
+#| code-line-numbers: false
+
+sim_ht(n = 5, 
+        avg = 66, 
+        std = 3)
+```
+:::
+:::
+:::
+:::
+
+
+
+## Simulate Multiple Datasets - Step 2
+
+Create a set of parameters (mean and SD) for each population.
 
 ```{r}
-expand_grid(mean_ht = seq(from = 60, to = 78, by = 6),
+#| code-line-numbers: false
+
+crossing(mean_ht = seq(from = 60, to = 78, by = 6),
             std_ht  = c(3, 6))
 ```
 
-### Simulate
+## Simulate Multiple Datasets - Step 3
 
 Simulate datasets with different mean and SD heights.
 
+::: {.small}
 ```{r}
-#| code-fold: true
-expand_grid(mean_ht = seq(from = 60, to = 78, by = 6),
-            std_ht  = c(3, 6)) |> 
-  mutate(ht_data = pmap(list(avg = mean_ht,
-                             std  = std_ht),
-                        ht_func)) |>
-  unnest(cols = ht_data) |> 
-  head()
+#| code-line-numbers: "4-7"
+
+crossing(mean_ht = seq(from = 60, to = 78, by = 6),
+         std_ht  = c(3, 6)
+         ) |> 
+ mutate(ht_data = pmap(.l = list(avg = mean_ht, std = std_ht), 
+                       .f = sim_ht
+                       )
+        )
 ```
+:::
 
-### Plot
+. . .
 
-Consider the samples simulated from each population.
+::: {.small}
+::: {.callout-tip}
+# Why am I getting a tibble in the `ht_data` column?
+:::
+:::
 
+## Simulate Multiple Datasets - Step 4
+
+Extract the contents of each list!
+
+::: {.small}
+```{r}
+#| code-line-numbers: "8"
+#| eval: false
+
+crossing(mean_ht = seq(from = 60, to = 78, by = 6),
+         std_ht  = c(3, 6)
+         ) |> 
+ mutate(ht_data = pmap(.l = list(avg = mean_ht, std = std_ht), 
+                       .f = sim_ht
+                       )
+        ) |> 
+  unnest(cols = ht_data) |> 
+  slice_sample(n = 10)
+```
+:::
+
+::: columns
+::: {.column width="50%"}
+::: {.small}
 ```{r}
 #| echo: false
-fake_ht_data <- expand_grid(mean_ht = seq(from = 60, to = 78, by = 6),
-                          std_ht  = c(3, 6)) |> 
-  mutate(ht_data = pmap(list(avg = mean_ht,
-                             std  = std_ht),
-                        ht_func)) |>
-  unnest(cols = c(ht_data))
+#| eval: true
+
+crossing(mean_ht = seq(from = 60, to = 78, by = 6),
+         std_ht  = c(3, 6)
+         ) |> 
+ mutate(ht_data = pmap(.l = list(avg = mean_ht, std = std_ht), 
+                       .f = sim_ht
+                       )
+        ) |> 
+  unnest(cols = ht_data) |> 
+  slice_head(n = 10)
+```
+:::
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="45%"}
+::: {.midi}
+::: {.fragment}
+Why do I now have `person` and `ht` columns?
+:::
+
+::: {.fragment}
+How many rows should I have for each `mean_ht`, `std_ht` combo?
+:::
+:::
+:::
+:::
+
+## A note: `nest()` and `unnest()`
+
+-   We can pair functions from the `map()` family very nicely with two `tidyr`
+functions: `nest()` and `unnest()`.
+-   These allow us to easily map functions onto subsets of the data.
+
+. . .
+
+- `nest()` subsets of the data (as tibbles) inside a tibble.
+
+```{r}
+mtcars |> 
+  nest(.by = cyl)
+```
+
+. . .
+
+- `unnest()` the data by row binding the subsets back together.
+
+
+
+
+## Simulate Multiple Datasets - Step 5
+
+Plot the samples simulated from each population.
+
+::: {.small}
+```{r}
+#| echo: false
+#| code-line-numbers: false
+
+fake_ht_data <- crossing(mean_ht = seq(from = 60, to = 78, by = 6),
+         std_ht  = c(3, 6)
+         ) |> 
+ mutate(ht_data = pmap(.l = list(avg = mean_ht, std = std_ht), 
+                       .f = sim_ht
+                       )
+        ) |> 
+  unnest(cols = ht_data)
 ```
 
 ```{r}
@@ -529,16 +703,30 @@ fake_ht_data <- expand_grid(mean_ht = seq(from = 60, to = 78, by = 6),
 #| fig-width: 8
 #| fig-height: 4
 #| fig-align: center
+
 fake_ht_data |> 
-  ggplot(aes(x = ht)) +
+  mutate(across(.cols = mean_ht:std_ht, 
+                .fns = ~as.character(.x)), 
+         mean_ht = fct_recode(mean_ht, 
+                              `Mean = 60` = "60", 
+                              `Mean = 66` = "66", 
+                              `Mean = 72` = "72", 
+                              `Mean = 78` = "78"), 
+         std_ht = fct_recode(std_ht, 
+                             `Std = 3` = "3", 
+                             `Std = 6` = "6")
+         ) |> 
+  ggplot(mapping = aes(x = ht)) +
   geom_histogram(color = "white") +
   facet_grid(std_ht ~ mean_ht) +
   labs(x = "Height (in)",
        y = "",
-       subtitle = "Frequency",
-       title = "Simulated Height Data from 8 Populations")
+       subtitle = "Frequency of Observations",
+       title = "Simulated Heights from Eight Different Populations")
 ```
 :::
+
+# Simulation - Random Samples from a Fixed Population
 
 ## Draw a Random Sample
 
@@ -551,16 +739,56 @@ sample(x = my_vec, size = 3)
 
 set.seed(1)
 sample(x = my_vec, size = 5, replace = T)
+
+sample(c(0, 1), size = 10, 
+       prob = c(.8, .2), replace = T)
 ```
+
+. . .
+
+:::callout-warning
+Whenever you take a sample, think about if you want to take a sample with or without **replacement**. The default is to sample without replacement.
+:::
 
 
 ## Draw a Random Sample
 
-Use `sample_n()` to take a random sample of observations (rows) from a dataset.
+Use `slice_sample()` to take a random sample of observations (rows) from a dataset.
 
 ```{r}
+#| eval: false
 fake_data |> 
-  sample_n(size = 3)
+  slice_sample(n = 3) 
+```
+
+. . .
+
+```{r}
+#| echo: false
+fake_data |> 
+  slice_sample(n = 3) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
+```
+
+. . .
+
+```{r}
+#| eval: false
+fake_data |> 
+  slice_sample(prop = .005) 
+```
+
+. . .
+
+```{r}
+#| echo: false
+fake_data |> 
+  slice_sample(prop = .005) |> 
+  knitr::kable() |> 
+  kableExtra::scroll_box(height = "200px") |> 
+  kableExtra::kable_styling(font_size = 25)
 ```
 
 
@@ -575,9 +803,11 @@ Suppose there is a group of 50 people.
 
 Write a function to ...
 
-+ ... simulate the birthdays of 50 people.
++ ... simulate the birthdays of 50 random people (assuming it is equally likely to be born any day of the year).
 + ... count how many birthdays are shared.
 + ... return whether or not a shared birthday exists.
+
+. . .
 
 ```{r}
 bDays <- function(n = 50){
@@ -596,7 +826,7 @@ bDays <- function(n = 50){
 
 ## Example: Birthday Simulation
 
-Use a `map()` function to simulate 1000 datasets.
+Use a `map()` function to repeat this simulation 1,000 times.
 
 + What proportion of these datasets contain at least two people with the same birthday?
 
@@ -604,8 +834,9 @@ Use a `map()` function to simulate 1000 datasets.
 sim_results <- map_lgl(.x = 1:1000,
                        .f = ~ bDays(n = 50))
 
-sum(sim_results)/1000
+mean(sim_results)
 ```
+
 
 
 ## In-line Code
@@ -631,7 +862,7 @@ To get this: My random number is `r my_rand`.
 Work with statistical distributions to determine if an instrument salesman is lying.
 :::
 :::{.column width=50%}
-![](images/The_Music_Man_poster_1957.jpg)
+![](images/The_Music_Man_poster_1957.jpg){width=90%}
 :::
 :::
 
@@ -639,6 +870,23 @@ Work with statistical distributions to determine if an instrument salesman is ly
 
 
 
+:::{columns}
+:::{.column width=70%}
+
+
+Complete two simulations to:
+
+1. find the probability that a hospital returns babies to the correct parents...
+2. demonstrate confidence interval coverage
+
+
+:::
+
+:::{.column width=30%}
+
+![](https://online.stat.psu.edu/stat100/assets/LostStudents.png)
+:::
+:::
 
 ## To do...
 
@@ -646,10 +894,10 @@ Work with statistical distributions to determine if an instrument salesman is ly
   + Due Friday 3/7 at 11:59pm.
 
 + **PA 9.2: Instrument Con**
-  + Due Saturday, 3/8 at 11:59pm.
+  + Due Sunday, 3/9 at 11:59pm.
 
 + **Lab 9: Simulation Exploration**
-  + Due Saturday, 3/8 at 11:59pm.
+  + Due Sunday, 3/9 at 11:59pm.
 
 + Read **Chapter 10** and complete **Check-in 10.1**.
   + Due Monday, 3/10 at 10:00am.
