@@ -24,6 +24,15 @@ library(tidyverse)
 
 [Download `StateNames_Z.csv`](StateNames_Z.csv)
 
+:::callout-caution
+# Disclaimer
+
+I have re-purposed this previous lab for the class as some practice problems for the final exam. This **does not** mean that this includes only the kinds of problems that will be on the exam nor that all of the problems here will be represented on the exam.
+
+This is just meant to be a tool for you to practice some of the core skills we have worked on in class!
+:::
+
+
 Our dataset contains the popularity over time for baby names that begin with the letter "Z". For each year and each name with at least 50 recorded babies born, we are given the counts of how many babies had that name in each US state.
 
 **We are going to look at how the name "Zoe" has changed over time!**
