@@ -1,0 +1,170 @@
+---
+title: "Final Exam Practice"
+subtitle: "Baby Names"
+author: "Your name"
+format: 
+  html:
+    embed-resources: true
+    code-tools: true
+    toc: true
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+#| include: false
+library(tidyverse)
+```
+
+[Download .qmd starter file](final-practice.qmd)
+
+[Download `StateNames_Z.csv`](StateNames_Z.csv)
+
+Our dataset contains the popularity over time for baby names that begin with the letter "Z". For each year and each name with at least 50 recorded babies born, we are given the counts of how many babies had that name in each US state.
+
+**We are going to look at how the name "Zoe" has changed over time!**
+
+::: callout-note
+
+If you wish to download the data for the first letter of **your name**, you can find that data [here](https://github.com/earobinson95/stat331-calpoly/tree/master/lab-assignments/lab9/baby-names-data).
+
+:::
+
+::: callout-caution
+
+The dataset has a column titled `Gender`, which contains two values `"F"` and `"M"`, representing "Female" and "Male". The sex someone was assigned at birth is different from their gender or gender identity [(definitions)](https://www.plannedparenthood.org/learn/gender-identity/sex-gender-identity). Thus, this variable should be **renamed** to `Sex` or `Assigned_Sex`.
+
+
+:::
+
+
+## Warm up
+
+**0.1. What was the most popular Z baby name in the year 2000? Your output should be just the name.**
+
+```{r}
+# Code for Q0.1
+```
+
+**0.2. Which state(s) had the fewest babies with a Z name in each year? Your output should include the year, state name, and number of babies**
+
+```{r}
+# Code for Q0.2
+```
+
+
+
+## Explore the Number of Zoes
+
+**1. Make a summary table of the number of babies named "Zoe" for each state and the assigned sex of the baby.**
+
+  + **Specifically, each state should be its own row and each assigned sex should have its own column.**
+  + **Additionally, if there were no babies born with the name "Zoe" for that combination of state and assigned sex, the table should have a value of 0 (not an `NA`).** 
+  
+::: callout-warning 
+
+To be clear, there should be **one** row per state, which means you need to aggregate across all the years for each state.
+
+
+You should be using only **one** `dplyr` pipeline!
+:::
+
+
+
+```{r}
+# Code for Q1.
+```
+
+**2. You should see in the table above that "Zoe" is a name given overwhelmingly to babies assigned "female" at birth. Create a new dataset that includes only babies named "Zoe" assigned `F` at birth. Summarize the data so there is one observation (the total number of "Zoe"s born) for each year.**
+
+::: callout-note
+
++ Remember you want to rename the `Gender` variable.
++ Save this dataset so you can use it going forward.
++ No output needed for this question, only code.
+
+:::
+
+```{r}
+# Code for Q2.
+```
+
+**3. Using the new summarized dataset from above, make a visualization showing how the popularity of the name "Zoe" for babies assigned female at birth has changed over the years.**
+
+```{r}
+# Code for Q3.
+```
+
+## Modeling the Number of Zoes
+
+**4. Using the summarized dataset from above, create a linear model with `Year` as the explanatory variable and the number of "Zoe"s as the response. Output a nicely formatted table of the estimated coefficients.**
+
+```{r}
+# Code for Q4.
+```
+
+**5. Visualize the fitted linear regression line along with the data. Does it look like a linear model is appropriate?**
+
+```{r}
+# Code for Q5.
+```
+
+**6. Plot the *residuals* of the fitted model versus `Year`. Comment on the residuals - do you see any patterns? Are the assumptions for linear regression met?**
+
+
+```{r}
+# Code for Q6.
+```
+
+
+## Spelling by State
+
+Dr. Rehnberg is very sensitive about the spelling of her name -- she thinks Zoe is objectively the best spelling! However, in coffee shops, it invariably gets spelled Zoey, and over the years, she has met folks named Zoe, Zoey, Zooey, Zoie, and even Zowie!
+
+**7. Narrow the original Z name dataset down to only female-assigned babies with these alternative spellings -- "Zoey", "Zooey", "Zoie", or "Zowie".**
+
+```{r}
+# Code for Q7.
+```
+
+**8. Make a plot comparing the popularity (total count) of these alternate spellings over time.**
+
+```{r}
+# Code for Q8.
+```
+
+**9. The "Zoey" spelling is way more common than the other three alternatives. Remake the above plot without "Zoey" so we can better see the trends.**
+
+```{r}
+# Code for Q9.
+```
+
+**10. The spellings "Zowie" and "Zooey" are not very common alternatives; however, "Zooey" gained some popularity in the 2010's. Create a table to display the number of babies born with each alternative spelling in California, Texas, and Pennsylvania during 2012.**
+
+::: callout-warning
+
+Specifically, each of the **four** alternative spellings should be in their own column and each of the **three** states should have their own row.
+
+Again, replace any `NA` with 0.
+
+:::
+
+::: callout-caution
+
+You should be using only **one** `dplyr` pipeline!
+
+:::
+
+```{r}
+# Code for Q10.
+```
+
+**11. Now format your table from Q10 nicely using one of the packages we learned about**
+
+```{r}
+# Code for Q11.
+```
