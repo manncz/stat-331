@@ -58,6 +58,11 @@ is VERY nice and a good practice to start.
 You will want to [download the .qmd](proj-citations.qmd) for this document to see exactly how everything works.
 :::
 
+:::callout-caution
+# Make sure bibtex is installed on your computer
+Just once, you will need to install the `bibtex` package if you don't already have bibtex installed on your computer.
+:::
+
 Quarto supports automatic citations using BibTex. You can find detailed information at [@quarto_cite], but I will also summarize some of the big points and give some tips.
 
 **Step 1**: Create a `.bib` document and save it in the same directory as your report .qmd. You can download the [references.bib](references.bib) file that I created for this example as a starting point.

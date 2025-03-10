@@ -3137,7 +3137,7 @@ vertical-align: -.125em;
 
 <section id="citing-small-coding-sources" class="level2">
 <h2 class="anchored" data-anchor-id="citing-small-coding-sources">Citing small coding sources</h2>
-<p>If you are just letting me know how you found any functions that we have not discussed in class - please include this as a <strong>comment in your code chunk</strong>.</p>
+<p>If you are just letting me know how you found any functions that we have not discussed in class - please include this as a <strong>comment in your code chunk</strong>. Remember, the text of your report should be discussing your analysis and findings, NOT your code.</p>
 <p>For example:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># basenames() function found in stackoverflow discussion</span></span>
@@ -3162,7 +3162,7 @@ vertical-align: -.125em;
 <blockquote class="blockquote">
 <p>Wilkinson (2005)</p>
 </blockquote>
-<p>If there is no author or year of publication (like for many websites) a <a href="https://quarto.org/docs/authoring/citations.html">hyperlink</a> to the website is acceptable.</p>
+<p>If there is no author or year of publication (like for many websites) a <a href="https://quarto.org/docs/authoring/citations.html">hyperlink</a> to the website is acceptable in-text and do your best to create a full citation in the References section citation.</p>
 <p>You may use any citation style for References as long as it is consistent.</p>
 <p>You can do all of this manually, but you may also want to use citation tools in Quarto, which I explain in the next section.</p>
 </section>
@@ -3194,6 +3194,19 @@ Warning
 <p>You will want to <a href="proj-citations.qmd">download the .qmd</a> for this document to see exactly how everything works.</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Make sure bibtex is installed on your computer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Just once, you will need to install the <code>bibtex</code> package if you don’t already have bibtex installed on your computer.</p>
+</div>
+</div>
 <p>Quarto supports automatic citations using BibTex. You can find detailed information at <span class="citation" data-cites="quarto_cite">(<a href="#ref-quarto_cite" role="doc-biblioref">Posit 2025</a>)</span>, but I will also summarize some of the big points and give some tips.</p>
 <p><strong>Step 1</strong>: Create a <code>.bib</code> document and save it in the same directory as your report .qmd. You can download the <a href="references.bib">references.bib</a> file that I created for this example as a starting point.</p>
 <p><strong>Step 2:</strong> Tell Quarto to that you have a references document. Include the following in your YAML (changin the name of the <code>.bib</code> document appropriately:</p>
@@ -3220,7 +3233,7 @@ Warning
 <li><span class="citation" data-cites="wickham2016r">(<a href="#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund 2016</a>)</span> or</li>
 <li><span class="citation" data-cites="wickham2016r">Wickham and Grolemund (<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span></li>
 </ul>
-<p>This will make a nicely formatted in-text citation as well as <em>automatically</em> creating a “References” section at the end of your document with the full citations.</p>
+<p>This will make a nicely formatted in-text citation as well as <em>automatically</em> creating a “References” section at the end of your document with the full citations like you can see here!</p>
 <!-- -->
 
 
@@ -3717,7 +3730,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Citing small coding sources</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>If you are just letting me know how you found any functions that we have not discussed in class - please include this as a **comment in your code chunk**.</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>If you are just letting me know how you found any functions that we have not discussed in class - please include this as a **comment in your code chunk**. Remember, the text of your report should be discussing your analysis and findings, NOT your code.</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>For example:</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
@@ -3744,7 +3757,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Wilkinson (2005)</span></span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>If there is no author or year of publication (like for many websites) a <span class="co">[</span><span class="ot">hyperlink</span><span class="co">](https://quarto.org/docs/authoring/citations.html)</span> to the website is acceptable.</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>If there is no author or year of publication (like for many websites) a <span class="co">[</span><span class="ot">hyperlink</span><span class="co">](https://quarto.org/docs/authoring/citations.html)</span> to the website is acceptable in-text and do your best to create a full citation in the References section citation.</span>
 <span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>You may use any citation style for References as long as it is consistent.</span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
@@ -3763,44 +3776,49 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>You will want to <span class="co">[</span><span class="ot">download the .qmd</span><span class="co">](proj-citations.qmd)</span> for this document to see exactly how everything works.</span>
 <span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>Quarto supports automatic citations using BibTex. You can find detailed information at <span class="co">[</span><span class="ot">@quarto_cite</span><span class="co">]</span>, but I will also summarize some of the big points and give some tips.</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>**Step 1**: Create a <span class="in">`.bib`</span> document and save it in the same directory as your report .qmd. You can download the <span class="co">[</span><span class="ot">references.bib</span><span class="co">](references.bib)</span> file that I created for this example as a starting point.</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>**Step 2:** Tell Quarto to that you have a references document. Include the following in your YAML (changin the name of the <span class="in">`.bib`</span> document appropriately:</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="in">`bibliography: references.bib`</span></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>**Step 3:** Add citations to your <span class="in">`.bib`</span>! BibTex has a special way that you need to include the citations. </span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You can find some examples in the <span class="co">[</span><span class="ot">references.bib</span><span class="co">](references.bib)</span> file. </span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>There are many websites that you can find that help you generate a BibTex citation such as <span class="co">[</span><span class="ot">this one</span><span class="co">](https://zbib.org/)</span>. </span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Often journals also provide a way to download a BibTex citation for a given paper.</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>Citations look something like this:</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="in">@book{wickham2016r,</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="in">    title = {R for data science: {Import}, tidy, transform, visualize, and model data},</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="in">    url = {https://books.google.com/books?id=vfi3DQAAQBAJ},</span></span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="in">    publisher = {O&#39;Reilly Media},</span></span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="in">    author = {Wickham, H. and Grolemund, G.},</span></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="in">    year = {2016},</span></span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="in">    note = {tex.lccn: 2017300238},</span></span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>The first entry <span class="in">`wickham2016r`</span> gives a &quot;nickname&quot; for the citation that you can then use to reference it in your main document.</span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>**Step 4: Cite!**</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>:::callout-caution</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="fu"># Make sure bibtex is installed on your computer</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>Just once, you will need to install the <span class="in">`bibtex`</span> package if you don&#39;t already have bibtex installed on your computer.</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>Quarto supports automatic citations using BibTex. You can find detailed information at <span class="co">[</span><span class="ot">@quarto_cite</span><span class="co">]</span>, but I will also summarize some of the big points and give some tips.</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>**Step 1**: Create a <span class="in">`.bib`</span> document and save it in the same directory as your report .qmd. You can download the <span class="co">[</span><span class="ot">references.bib</span><span class="co">](references.bib)</span> file that I created for this example as a starting point.</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>**Step 2:** Tell Quarto to that you have a references document. Include the following in your YAML (changin the name of the <span class="in">`.bib`</span> document appropriately:</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="in">`bibliography: references.bib`</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>**Step 3:** Add citations to your <span class="in">`.bib`</span>! BibTex has a special way that you need to include the citations. </span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You can find some examples in the <span class="co">[</span><span class="ot">references.bib</span><span class="co">](references.bib)</span> file. </span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>There are many websites that you can find that help you generate a BibTex citation such as <span class="co">[</span><span class="ot">this one</span><span class="co">](https://zbib.org/)</span>. </span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Often journals also provide a way to download a BibTex citation for a given paper.</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>Citations look something like this:</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="in">@book{wickham2016r,</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="in">    title = {R for data science: {Import}, tidy, transform, visualize, and model data},</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a><span class="in">    url = {https://books.google.com/books?id=vfi3DQAAQBAJ},</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="in">    publisher = {O&#39;Reilly Media},</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="in">    author = {Wickham, H. and Grolemund, G.},</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="in">    year = {2016},</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="in">    note = {tex.lccn: 2017300238},</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>In Quarto you can include in text citations by refrencing that nickname with an <span class="in">`@`</span> in front (e.g. <span class="in">`@wickham2016r`</span>). You can chose one of two formats for in-text citation depending on the context: </span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>The first entry <span class="in">`wickham2016r`</span> gives a &quot;nickname&quot; for the citation that you can then use to reference it in your main document.</span>
 <span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">@wickham2016r</span><span class="co">]</span> or </span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@wickham2016r </span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>**Step 4: Cite!**</span>
 <span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>This will make a nicely formatted in-text citation as well as *automatically* creating a &quot;References&quot; section at the end of your document with the full citations.</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>In Quarto you can include in text citations by refrencing that nickname with an <span class="in">`@`</span> in front (e.g. <span class="in">`@wickham2016r`</span>). You can chose one of two formats for in-text citation depending on the context: </span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">@wickham2016r</span><span class="co">]</span> or </span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@wickham2016r </span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>This will make a nicely formatted in-text citation as well as *automatically* creating a &quot;References&quot; section at the end of your document with the full citations like you can see here!</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
